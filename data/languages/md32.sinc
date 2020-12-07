@@ -86,6 +86,11 @@ attach variables [ rm_r1_r8 ] [
 	call [rd];
 }
 
+# Store half word at an offset relative to a register.
+:sh rs1, simm_19_8(rd) is op_31_20=0x066 & simm_19_8 & rs1 & rd {
+	*(rd + simm_19_8) = rs1:2;
+}
+
 # Store word at an offset relative to a register.
 :sw rs1, simm_19_8(rd) is op_31_20=0x067 & simm_19_8 & rs1 & rd {
 	*(rd + simm_19_8) = rs1;
