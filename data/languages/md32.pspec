@@ -1,4 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <processor_spec>
   <programcounter register="pc"/>
+  <default_symbols>
+    <symbol name="Reset" address="PMEM:0x00" entry="true" type="code"/>
+    <symbol name="Reserved1" address="PMEM:0x04" entry="true" type="code"/>
+    <symbol name="Reserved2" address="PMEM:0x08" entry="true" type="code"/>
+    <symbol name="Reserved3" address="PMEM:0x0c" entry="true" type="code"/>
+    <symbol name="Reserved4" address="PMEM:0x10" entry="true" type="code"/>
+    <symbol name="Reserved5" address="PMEM:0x14" entry="true" type="code"/>
+    <symbol name="Div0" address="PMEM:0x18" entry="true" type="code"/>
+    <symbol name="Unaligned" address="PMEM:0x1c" entry="true" type="code"/>
+    <symbol name="Syscall0" address="PMEM:0x20" entry="true" type="code"/>
+    <symbol name="Syscall1" address="PMEM:0x24" entry="true" type="code"/>
+    <symbol name="Syscall2" address="PMEM:0x28" entry="true" type="code"/>
+    <symbol name="Syscall3" address="PMEM:0x2c" entry="true" type="code"/>
+    <symbol name="Syscall4" address="PMEM:0x30" entry="true" type="code"/>
+    <symbol name="Syscall5" address="PMEM:0x34" entry="true" type="code"/>
+    <symbol name="Syscall6" address="PMEM:0x38" entry="true" type="code"/>
+    <symbol name="Syscall7" address="PMEM:0x3c" entry="true" type="code"/>
+    <symbol name="ExternalIrq0" address="PMEM:0x40" entry="true" type="code"/>
+    <symbol name="ExternalIrq1" address="PMEM:0x44" entry="true" type="code"/>
+    <symbol name="ExternalIrq2" address="PMEM:0x48" entry="true" type="code"/>
+    <symbol name="ExternalIrq3" address="PMEM:0x4c" entry="true" type="code"/>
+    <symbol name="ExternalIrq4" address="PMEM:0x50" entry="true" type="code"/>
+    <symbol name="ExternalIrq5" address="PMEM:0x54" entry="true" type="code"/>
+    <symbol name="ExternalIrq6" address="PMEM:0x58" entry="true" type="code"/>
+    <symbol name="ExternalIrq7" address="PMEM:0x5c" entry="true" type="code"/>
+    <symbol name="ExternalIrq8" address="PMEM:0x60" entry="true" type="code"/>
+  </default_symbols>
 </processor_spec>
