@@ -1,0 +1,91 @@
+define endian=big;
+define alignment=2;
+
+define space ram type=ram_space size=4 default;
+define space register type=register_space size=4;
+
+define register offset=0 size=4 [
+	r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15
+];
+
+define register offset=0x1000 size=4 pc;
+
+define token instr32(32)
+	op_31_25 = (25, 31)
+	op_31_24 = (24, 31)
+	op_31_21 = (21, 31)
+	op_31_4 = (4, 31)
+	imm_23_8 = (8, 23)
+	simm_24_4 = (4, 24) signed
+	simm_20_0 = (0, 20) signed
+	rs1 = (4, 7)
+	rd = (0, 3)
+;
+
+define token instr16(16)
+	op_15_9 = (9, 15)
+	op_15_8 = (8, 15)
+	imm_8_4 = (4, 8)
+	imm_7_0 = (0, 7)
+	rn = (0, 3)
+;
+
+attach variables [ rd rs1 rn ] [
+	r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15
+];
+
+
+# 32-bit instructions
+
+# Move signed immediate to register.
+:mv rd, simm_24_4 is op_31_25=0 & simm_24_4 & rd {
+	rd = simm_24_4;
+}
+
+# OR a register with an immediate.
+:or rd, rs1, imm_23_8 is op_31_24=0x0d & imm_23_8 & rs1 & rd {
+	rd = rs1 | imm_23_8;
+}
+
+# Set the high 16 bits of a register, clearing the lower bits.
+:sethi rd, imm_23_8 is op_31_24=0x0f & imm_23_8 & rs1=0 & rd {
+	rd = imm_23_8 << 16;
+}
+
+# Unconditional relative jump.
+:j jump_dest is op_31_21=0b00011110000 & simm_20_0 [
+	jump_dest = inst_start + simm_20_0 * 2;
+] {
+	goto [jump_dest:4];
+}
+
+# Unconditional relative jump with link.
+:jal jump_dest is op_31_21=0b00011111000 & simm_20_0 [
+	jump_dest = inst_start + simm_20_0 * 2;
+] {
+	r15 = inst_next;
+	call [jump_dest:4];
+}
+
+# Unconditional absolute jump to register with link.
+:jal rd is op_31_4=0x1f80000 & rd {
+	r15 = inst_next;
+	call [rd];
+}
+
+
+# Stand-alone 16-bit instructions.
+
+# Add an unsigned immediate to the stack pointer.
+:addsp16 offset is op_15_8=0x92 & imm_7_0 [
+	offset = imm_7_0 * 4;
+] {
+	r14 = r14 + offset;
+}
+
+# Store word at an offset relative to the stack pointer.
+:sw16 rn, offset is op_15_9=0b1010011 & imm_8_4 & rn [
+	offset = -0x80 + imm_8_4 * 4;
+] {
+	*(r14 + offset) = rn;
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language_definitions>
+  <language processor="MediaTek MD32"
+            endian="little"
+            instructionEndian="big"
+            size="32"
+            variant="default"
+            version="0.1"
+            slafile="md32.sla"
+            processorspec="md32.pspec"
+            id="MD32:LE:32:default">
+    <description>MediaTek MD32, little endian</description>
+    <compiler name="default" spec="md32.cspec" id="default"/>
+  </language>
+</language_definitions>
