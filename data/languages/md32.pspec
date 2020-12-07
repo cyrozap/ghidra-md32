@@ -28,4 +28,9 @@
     <symbol name="ExternalIrq7" address="PMEM:0x5c" entry="true" type="code"/>
     <symbol name="ExternalIrq8" address="PMEM:0x60" entry="true" type="code"/>
   </default_symbols>
+  <default_memory_blocks>
+    <memory_block name="CFGREG" start_address="DMEM:0xd0000000" length="0x10000000" mode="rwv" initialized="false"/>
+    <memory_block name="SYSTEM" start_address="DMEM:0xe0000000" length="0x10000000" mode="rwv" initialized="false"/>
+    <memory_block name="MISC" start_address="DMEM:0xf0000000" length="0x10000000" mode="rwv" initialized="false"/>
+  </default_memory_blocks>
 </processor_spec>
