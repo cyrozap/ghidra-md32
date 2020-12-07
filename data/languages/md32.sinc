@@ -14,10 +14,12 @@ define token instr32(32)
 	op_31_25 = (25, 31)
 	op_31_24 = (24, 31)
 	op_31_21 = (21, 31)
+	op_31_20 = (20, 31)
 	op_31_4 = (4, 31)
 	imm_23_8 = (8, 23)
 	simm_24_4 = (4, 24) signed
 	simm_20_0 = (0, 20) signed
+	simm_19_8 = (8, 19) signed
 	rs1 = (4, 7)
 	rd = (0, 3)
 ;
@@ -71,6 +73,11 @@ attach variables [ rd rs1 rn ] [
 :jal rd is op_31_4=0x1f80000 & rd {
 	r15 = inst_next;
 	call [rd];
+}
+
+# Store word at an offset relative to a register.
+:sw rs1, simm_19_8(rd) is op_31_20=0x067 & simm_19_8 & rs1 & rd {
+	*(rd + simm_19_8) = rs1;
 }
 
 
