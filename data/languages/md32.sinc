@@ -29,15 +29,21 @@ define token instr16(16)
 	op_15_9 = (9, 15)
 	op_15_8 = (8, 15)
 	op_15_4 = (4, 15)
+	imm_9_7 = (7, 9)
 	imm_9_4 = (4, 9)
 	imm_8_4 = (4, 8)
 	imm_7_0 = (0, 7)
+	rm_r1_r8 = (4, 6)
 	rm = (4, 7)
 	rn = (0, 3)
 ;
 
 attach variables [ rd rs1 rn rm ] [
 	r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15
+];
+
+attach variables [ rm_r1_r8 ] [
+	r1 r2 r3 r4 r5 r6 r7 r8
 ];
 
 
@@ -109,6 +115,13 @@ attach variables [ rd rs1 rn rm ] [
 # Move data from register to register.
 :mv16 rn, rm is op_15_8=0x93 & rm & rn {
 	rn = rm;
+}
+
+# Load word from an offset relative to a register between r1 and r8.
+:lw16 rn, offset^(rm_r1_r8) is op_15_10=0b101010 & imm_9_7 & rm_r1_r8 & rn [
+	offset = imm_9_7 * 4;
+] {
+	rn = *(rm_r1_r8 + offset);
 }
 
 # Load word from an offset relative to the stack pointer.
