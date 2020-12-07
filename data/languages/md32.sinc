@@ -1,7 +1,8 @@
 define endian=big;
 define alignment=2;
 
-define space ram type=ram_space size=4 default;
+define space PMEM type=ram_space size=4 default;
+define space DMEM type=ram_space size=4;
 define space register type=register_space size=4;
 
 define register offset=0 size=4 [
@@ -88,12 +89,12 @@ attach variables [ rm_r1_r8 ] [
 
 # Store half word at an offset relative to a register.
 :sh rs1, simm_19_8(rd) is op_31_20=0x066 & simm_19_8 & rs1 & rd {
-	*(rd + simm_19_8) = rs1:2;
+	*[DMEM](rd + simm_19_8) = rs1:2;
 }
 
 # Store word at an offset relative to a register.
 :sw rs1, simm_19_8(rd) is op_31_20=0x067 & simm_19_8 & rs1 & rd {
-	*(rd + simm_19_8) = rs1;
+	*[DMEM](rd + simm_19_8) = rs1;
 }
 
 
@@ -132,19 +133,19 @@ attach variables [ rm_r1_r8 ] [
 :lw16 rn, offset^(rm_r1_r8) is op_15_10=0b101010 & imm_9_7 & rm_r1_r8 & rn [
 	offset = imm_9_7 * 4;
 ] {
-	rn = *(rm_r1_r8 + offset);
+	rn = *[DMEM](rm_r1_r8 + offset);
 }
 
 # Load word from an offset relative to the stack pointer.
 :lw16 rn, offset^("r14") is op_15_9=0b1010010 & imm_8_4 & rn [
 	offset = -0x80 + imm_8_4 * 4;
 ] {
-	rn = *(r14 + offset);
+	rn = *[DMEM](r14 + offset);
 }
 
 # Store word at an offset relative to the stack pointer.
 :sw16 rn, offset^("r14") is op_15_9=0b1010011 & imm_8_4 & rn [
 	offset = -0x80 + imm_8_4 * 4;
 ] {
-	*(r14 + offset) = rn;
+	*[DMEM](r14 + offset) = rn;
 }
