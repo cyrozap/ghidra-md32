@@ -90,6 +90,13 @@ attach variables [ rd rs1 rn ] [
 	r14 = r14 + offset;
 }
 
+# Load word from an offset relative to the stack pointer.
+:lw16 rn, offset^("r14") is op_15_9=0b1010010 & imm_8_4 & rn [
+	offset = -0x80 + imm_8_4 * 4;
+] {
+	rn = *(r14 + offset);
+}
+
 # Store word at an offset relative to the stack pointer.
 :sw16 rn, offset^("r14") is op_15_9=0b1010011 & imm_8_4 & rn [
 	offset = -0x80 + imm_8_4 * 4;
