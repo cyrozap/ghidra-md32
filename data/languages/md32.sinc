@@ -28,6 +28,7 @@ define token instr16(16)
 	op_15_10 = (10, 15)
 	op_15_9 = (9, 15)
 	op_15_8 = (8, 15)
+	op_15_4 = (4, 15)
 	imm_9_4 = (4, 9)
 	imm_8_4 = (4, 8)
 	imm_7_0 = (0, 7)
@@ -97,6 +98,11 @@ attach variables [ rd rs1 rn ] [
 	offset = imm_7_0 * 4;
 ] {
 	r14 = r14 + offset;
+}
+
+# Unconditional absolute jump to register.
+:j16 rn is op_15_4=0xa03 & rn {
+	goto [rn];
 }
 
 # Load word from an offset relative to the stack pointer.
