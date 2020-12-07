@@ -77,14 +77,14 @@ attach variables [ rd rs1 rn ] [
 # Stand-alone 16-bit instructions.
 
 # Add an unsigned immediate to the stack pointer.
-:addsp16 offset is op_15_8=0x92 & imm_7_0 [
+:addsp16 "r14", offset is op_15_8=0x92 & imm_7_0 [
 	offset = imm_7_0 * 4;
 ] {
 	r14 = r14 + offset;
 }
 
 # Store word at an offset relative to the stack pointer.
-:sw16 rn, offset is op_15_9=0b1010011 & imm_8_4 & rn [
+:sw16 rn, offset^("r14") is op_15_9=0b1010011 & imm_8_4 & rn [
 	offset = -0x80 + imm_8_4 * 4;
 ] {
 	*(r14 + offset) = rn;
