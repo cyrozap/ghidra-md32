@@ -77,6 +77,15 @@ attach variables [ rm_r1_r8 ] [
 	<skip>
 }
 
+# Branch if less-than, signed.
+:blt rs1, rd, jump_dest is op_31_23=0b000110100 & simm_22_8 & rs1 & rd [
+	jump_dest = inst_start + simm_22_8 * 2;
+] {
+	if !(rs1 s< rd) goto <skip>;
+	goto [jump_dest:4];
+	<skip>
+}
+
 # Branch if less-than, unsigned.
 :bltu.d1 rs1, rd, jump_dest is op_31_23=0b000100110 & simm_22_8 & rs1 & rd [
 	jump_dest = inst_start + simm_22_8 * 2;
