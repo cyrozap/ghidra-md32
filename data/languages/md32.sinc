@@ -87,6 +87,31 @@ attach variables [ rm_r1_r8 ] [
 	call [rd];
 }
 
+# Load byte from an offset relative to a register, zero extending.
+:lbu rs1, simm_19_8(rd) is op_31_20=0x060 & simm_19_8 & rs1 & rd {
+	rs1 = zext(*[DMEM]:1 (rd + simm_19_8));
+}
+
+# Load half word from an offset relative to a register, zero extending.
+:lhu rs1, simm_19_8(rd) is op_31_20=0x061 & simm_19_8 & rs1 & rd {
+	rs1 = zext(*[DMEM]:2 (rd + simm_19_8));
+}
+
+# Load byte from an offset relative to a register, sign extending.
+:lb rs1, simm_19_8(rd) is op_31_20=0x062 & simm_19_8 & rs1 & rd {
+	rs1 = sext(*[DMEM]:1 (rd + simm_19_8));
+}
+
+# Load half word from an offset relative to a register, sign extending.
+:lh rs1, simm_19_8(rd) is op_31_20=0x063 & simm_19_8 & rs1 & rd {
+	rs1 = sext(*[DMEM]:2 (rd + simm_19_8));
+}
+
+# Load word from an offset relative to a register.
+:lw rs1, simm_19_8(rd) is op_31_20=0x064 & simm_19_8 & rs1 & rd {
+	rs1 = *[DMEM](rd + simm_19_8);
+}
+
 # Store byte at an offset relative to a register.
 :sb rs1, simm_19_8(rd) is op_31_20=0x065 & simm_19_8 & rs1 & rd {
 	*[DMEM](rd + simm_19_8) = rs1:1;
