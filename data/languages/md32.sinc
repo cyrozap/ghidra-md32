@@ -185,6 +185,17 @@ attach variables [ rm_r1_r8 ] [
 	r14 = r14 + offset;
 }
 
+# Branch if not equal to zero.
+:bne16.d1 0x0, rn, jump_dest is op_15_9=0b1011101 & imm_8_4 & rn [
+	jump_dest = inst_start + imm_8_4 * 2;
+] {
+	local delayflag = (0 != rn);
+	delayslot(1);
+	if !delayflag goto <skip>;
+	goto [jump_dest:4];
+	<skip>
+}
+
 # Unconditional absolute jump to register 15 (link register).
 :j16 rn is op_15_4=0xa03 & rn & rn=15 {
 	return [rn];
