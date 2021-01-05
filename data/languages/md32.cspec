@@ -9,15 +9,21 @@
     <prototype extrapop="0" stackshift="0" name="__stdcall">
       <input>
         <pentry minsize="1" maxsize="4" extension="inttype">
-          <register name="r0"/>
+          <register name="r3"/>
         </pentry>
         <pentry minsize="1" maxsize="4" extension="inttype">
-          <register name="r3"/>
+          <register name="r4"/>
+        </pentry>
+        <pentry minsize="1" maxsize="4" extension="inttype">
+          <register name="r5"/>
+        </pentry>
+        <pentry minsize="1" maxsize="4" extension="inttype">
+          <register name="r6"/>
         </pentry>
       </input>
       <output>
         <pentry minsize="1" maxsize="4" extension="inttype">
-          <register name="r0"/>
+          <register name="r1"/>
         </pentry>
       </output>
     </prototype>
