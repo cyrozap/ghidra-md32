@@ -1,0 +1,7 @@
+<dwarf>
+  <register_mappings>
+    <register_mapping dwarf="0" ghidra="r0" auto_count="14" /> <!-- r0..r13 -->
+    <register_mapping dwarf="14" ghidra="r14" stackpointer="true" />
+    <register_mapping dwarf="15" ghidra="r15" />
+  </register_mappings>
+</dwarf>

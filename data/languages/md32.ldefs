@@ -11,5 +11,6 @@
             id="MD32:LE:32:default">
     <description>MediaTek MD32, little endian</description>
     <compiler name="default" spec="md32.cspec" id="default"/>
+    <external_name tool="DWARF.register.mapping.file" name="md32.dwarf"/>
   </language>
 </language_definitions>
