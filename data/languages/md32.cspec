@@ -4,7 +4,7 @@
     <range space="PMEM"/>
     <range space="DMEM"/>
   </global>
-  <stackpointer register="r14" space="DMEM"/>
+  <stackpointer register="r14" space="DMEM" growth="positive"/>
   <default_proto>
     <prototype extrapop="0" stackshift="0" name="__stdcall">
       <input>
