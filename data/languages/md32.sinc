@@ -8,6 +8,9 @@ define space register type=register_space size=4;
 define register offset=0 size=4 [
 	r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15
 
+	sr ipc isr
+	lf ls0 le0 lc0 ls1 le1 lc1 ls2 le2 lc2
+
 	a0h a0l
 ];
 
@@ -21,6 +24,7 @@ define token instr32(32)
 	op_31_20 = (20, 31)
 	op_31_17 = (17, 31)
 	op_31_12 = (12, 31)
+	op_31_8 = (8, 31)
 	op_31_4 = (4, 31)
 	op_15_13 = (13, 15)
 	imm_23_8 = (8, 23)
@@ -31,6 +35,7 @@ define token instr32(32)
 	a0hl = (16, 16)
 	rs2 = (8, 11)
 	rs1 = (4, 7)
+	csrd = (0, 3)
 	rd = (0, 3)
 ;
 
@@ -56,6 +61,10 @@ attach variables [ rd rs1 rs2 rn rm ] [
 
 attach variables [ rm_r1_r8 ] [
 	r1 r2 r3 r4 r5 r6 r7 r8
+];
+
+attach variables [ csrd ] [
+	sr ipc isr _ lf ls0 le0 lc0 ls1 le1 lc1 ls2 le2 lc2 _ _
 ];
 
 attach variables [ a0hl ] [
@@ -98,6 +107,11 @@ attach variables [ a0hl ] [
 # Move from accumulator(?) to register.
 :mv rd, a0hl is op_31_17=0b000001000001011 & a0hl & op_15_13=0b001 & rd {
 	rd = a0hl;
+}
+
+# Move from register to CSR.
+:mv csrd, rs1 is op_31_8=0x041820 & rs1 & csrd {
+	csrd = rs1;
 }
 
 # OR a register with an immediate.
