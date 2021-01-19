@@ -32,6 +32,7 @@ define token instr16(16)
 	op_15_9 = (9, 15)
 	op_15_8 = (8, 15)
 	op_15_4 = (4, 15)
+	op_15_0 = (0, 15)
 	imm_9_7 = (7, 9)
 	imm_9_4 = (4, 9)
 	imm_8_4 = (4, 8)
@@ -160,6 +161,9 @@ attach variables [ rm_r1_r8 ] [
 
 
 # Stand-alone 16-bit instructions.
+
+# 16-bit NOP.
+:nop16 is op_15_0=0x8000 {}
 
 # Add a signed immediate to a register.
 :add16 rn, simm_8_4 is op_15_9=0b1000011 & simm_8_4 & rn {
