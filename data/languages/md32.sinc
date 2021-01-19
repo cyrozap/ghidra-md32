@@ -17,12 +17,14 @@ define token instr32(32)
 	op_31_23 = (23, 31)
 	op_31_21 = (21, 31)
 	op_31_20 = (20, 31)
+	op_31_12 = (12, 31)
 	op_31_4 = (4, 31)
 	imm_23_8 = (8, 23)
 	simm_24_4 = (4, 24) signed
 	simm_22_8 = (8, 22) signed
 	simm_20_0 = (0, 20) signed
 	simm_19_8 = (8, 19) signed
+	rs2 = (8, 11)
 	rs1 = (4, 7)
 	rd = (0, 3)
 ;
@@ -43,7 +45,7 @@ define token instr16(16)
 	rn = (0, 3)
 ;
 
-attach variables [ rd rs1 rn rm ] [
+attach variables [ rd rs1 rs2 rn rm ] [
 	r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15
 ];
 
@@ -57,6 +59,18 @@ attach variables [ rm_r1_r8 ] [
 # Move signed immediate to register.
 :mv rd, simm_24_4 is op_31_25=0 & simm_24_4 & rd {
 	rd = simm_24_4;
+}
+
+# Conditional inversion.
+:cinv rd, rs1, rs2 is op_31_12=0x0407e & rs2 & rs1 & rd {
+	# If rs1 is positive, rd=rs2.
+	if (rs1 s< 0) goto <negative>;
+	rd = rs2;
+	goto <end>;
+	<negative>
+	# If rs1 is negative, rd=-rs2.
+	rd = -rs2;
+	<end>
 }
 
 # OR a register with an immediate.
