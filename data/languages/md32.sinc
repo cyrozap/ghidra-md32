@@ -214,6 +214,18 @@ attach variables [ rm_r1_r8 ] [
 	<skip>
 }
 
+# Unconditional absolute jump to register 15 (link register), delayed by 2.
+:j16.d2 rn is op_15_4=0xa02 & rn & rn=15 {
+	delayslot(2);
+	return [rn];
+}
+
+# Unconditional absolute jump to register, delayed by 2.
+:j16.d2 rn is op_15_4=0xa02 & rn {
+	delayslot(2);
+	goto [rn];
+}
+
 # Unconditional absolute jump to register 15 (link register).
 :j16 rn is op_15_4=0xa03 & rn & rn=15 {
 	return [rn];
