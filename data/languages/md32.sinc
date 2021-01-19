@@ -70,6 +70,19 @@ attach variables [ a0hl ] [
 	rd = simm_24_4;
 }
 
+# Unsigned division.
+:udiv rd, rs2 is op_31_12=0x040dc & rs2 & rd {
+	a0l = rd / rs2;
+	a0h = rd % rs2;
+}
+
+# Also unsigned division. Maybe the u/s are for unsaturating/saturating?
+# TODO: Find out how sdiv differs from udiv.
+:sdiv rd, rs2 is op_31_12=0x040dd & rs2 & rd {
+	a0l = rd / rs2;
+	a0h = rd % rs2;
+}
+
 # Conditional inversion.
 :cinv rd, rs1, rs2 is op_31_12=0x0407e & rs2 & rs1 & rd {
 	# If rs1 is positive, rd=rs2.
