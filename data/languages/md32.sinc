@@ -50,6 +50,7 @@ define token instr16(16)
 	op_15_10 = (10, 15)
 	op_15_9 = (9, 15)
 	op_15_8 = (8, 15)
+	op_15_7 = (7, 15)
 	op_15_4 = (4, 15)
 	op_15_0 = (0, 15)
 	imm_9_7 = (7, 9)
@@ -58,6 +59,7 @@ define token instr16(16)
 	imm_7_0 = (0, 7)
 	simm_10_4 = (4, 10) signed
 	simm_8_4 = (4, 8) signed
+	simm_6_0 = (0, 6) signed
 	rm_r1_r8 = (4, 6)
 	rm = (4, 7)
 	rn = (0, 3)
@@ -333,6 +335,14 @@ attach variables [ a0hl ] [
 # Unconditional absolute jump to register.
 :j16 rn is op_15_4=0xa03 & rn {
 	goto [rn];
+}
+
+# Unconditional relative jump by immediate, delayed by 1.
+:j16.d1 jump_dest is op_15_7=0b101000010 & simm_6_0 [
+	jump_dest = inst_start + simm_6_0 * 2;
+] {
+	delayslot(1);
+	goto [jump_dest:4];
 }
 
 # Move data from register to register.
