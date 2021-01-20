@@ -40,6 +40,7 @@ define token instr32(32)
 ;
 
 define token instr16(16)
+	op_15_11 = (11, 15)
 	op_15_10 = (10, 15)
 	op_15_9 = (9, 15)
 	op_15_8 = (8, 15)
@@ -49,6 +50,7 @@ define token instr16(16)
 	imm_9_4 = (4, 9)
 	imm_8_4 = (4, 8)
 	imm_7_0 = (0, 7)
+	simm_10_4 = (4, 10) signed
 	simm_8_4 = (4, 8) signed
 	rm_r1_r8 = (4, 6)
 	rm = (4, 7)
@@ -280,6 +282,11 @@ attach variables [ a0hl ] [
 # Move data from register to register.
 :mv16 rn, rm is op_15_8=0x93 & rm & rn {
 	rn = rm;
+}
+
+# Move immediate to register.
+:mv16 rn, simm_10_4 is op_15_11=0b10011 & simm_10_4 & rn {
+	rn = simm_10_4;
 }
 
 # Load word from an offset relative to a register between r1 and r8.
