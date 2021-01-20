@@ -270,6 +270,9 @@ attach variables [ a0hl ] [
 # 16-bit NOP.
 :nop16 is op_15_0=0x8000 {}
 
+# Another 16-bit NOP.
+:nop16.l is op_15_0=0xa000 {}
+
 # Add a signed immediate to a register.
 :add16 rn, simm_8_4 is op_15_9=0b1000011 & simm_8_4 & rn {
 	rn = rn + simm_8_4;
