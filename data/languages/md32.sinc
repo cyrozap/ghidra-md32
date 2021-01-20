@@ -20,6 +20,7 @@ define token instr32(32)
 	op_31_25 = (25, 31)
 	op_31_24 = (24, 31)
 	op_31_23 = (23, 31)
+	op_31_22 = (22, 31)
 	op_31_21 = (21, 31)
 	op_31_20 = (20, 31)
 	op_31_17 = (17, 31)
@@ -28,11 +29,15 @@ define token instr32(32)
 	op_31_4 = (4, 31)
 	op_15_13 = (13, 15)
 	imm_23_8 = (8, 23)
+	imm_4_0 = (0, 4)
 	simm_24_4 = (4, 24) signed
 	simm_22_8 = (8, 22) signed
+	simm_21_18 = (18, 21) signed
 	simm_20_0 = (0, 20) signed
 	simm_19_8 = (8, 19) signed
+	simm_17_9 = (9, 17) signed
 	a0hl = (16, 16)
+	r_8_5 = (5, 8)
 	rs2 = (8, 11)
 	rs1 = (4, 7)
 	csrd = (0, 3)
@@ -57,7 +62,7 @@ define token instr16(16)
 	rn = (0, 3)
 ;
 
-attach variables [ rd rs1 rs2 rn rm ] [
+attach variables [ rd rs1 rs2 r_8_5 rn rm ] [
 	r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15
 ];
 
@@ -140,6 +145,18 @@ attach variables [ a0hl ] [
 	jump_dest = inst_start + simm_22_8 * 2;
 ] {
 	if !(rs1 s< rd) goto <skip>;
+	goto [jump_dest:4];
+	<skip>
+}
+
+# Branch if register less than immediate, signed, delayed by 1.
+:blt.d1 r_8_5, calc_imm, jump_dest is op_31_22=0b0001001011 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
+	calc_imm = (simm_21_18 << 5) | imm_4_0;
+	jump_dest = inst_start + simm_17_9 * 2;
+] {
+	local delayflag = (r_8_5 s< calc_imm:4);
+	delayslot(1);
+	if !delayflag goto <skip>;
 	goto [jump_dest:4];
 	<skip>
 }
