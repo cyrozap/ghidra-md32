@@ -140,6 +140,17 @@ attach variables [ a0hl ] [
 	<skip>
 }
 
+# Branch if immediate less than or equal to register, signed, delayed by 1.
+:ble calc_imm, r_8_5, jump_dest is op_31_22=0b0001100010 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
+	calc_imm = (simm_21_18 << 5) | imm_4_0;
+	jump_dest = inst_start + simm_17_9 * 2;
+] {
+	local flag = (calc_imm:4 s<= r_8_5);
+	if !flag goto <skip>;
+	goto [jump_dest:4];
+	<skip>
+}
+
 # Branch if less-than, signed.
 :blt rs1, rd, jump_dest is op_31_23=0b000110100 & simm_22_8 & rs1 & rd [
 	jump_dest = inst_start + simm_22_8 * 2;
