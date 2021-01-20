@@ -234,6 +234,9 @@ attach variables [ a0hl ] [
 	rn = r14 + offset;
 }
 
+# AND two registers.
+:and16 rn, rm is op_15_8=0x8a & rm & rn { rn = rn & rm; }
+
 # OR two registers.
 :or16  rn, rm is op_15_8=0x8b & rm & rn { rn = rn | rm; }
 
