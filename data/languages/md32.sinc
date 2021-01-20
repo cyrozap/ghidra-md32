@@ -239,6 +239,11 @@ attach variables [ a0hl ] [
 	rn = rn | rm;
 }
 
+# XOR two registers.
+:xor16 rn, rm is op_15_8=0x8c & rm & rn {
+	rn = rn ^ rm;
+}
+
 # Add an unsigned immediate to the stack pointer.
 :addsp16 "r14", offset is op_15_8=0x92 & imm_7_0 [
 	offset = imm_7_0 * 4;
