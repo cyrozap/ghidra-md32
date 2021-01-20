@@ -31,6 +31,7 @@ define token instr32(32)
 	imm_23_8 = (8, 23)
 	imm_4_0 = (0, 4)
 	simm_24_4 = (4, 24) signed
+	simm_23_8 = (8, 23) signed
 	simm_22_8 = (8, 22) signed
 	simm_21_18 = (18, 21) signed
 	simm_20_0 = (0, 20) signed
@@ -119,6 +120,11 @@ attach variables [ a0hl ] [
 # Move from register to CSR.
 :mv csrd, rs1 is op_31_8=0x041820 & rs1 & csrd {
 	csrd = rs1;
+}
+
+# ADD a register with an immediate.
+:add rd, rs1, simm_23_8 is op_31_24=0x08 & simm_23_8 & rs1 & rd {
+	rd = rs1 + simm_23_8;
 }
 
 # OR a register with an immediate.
