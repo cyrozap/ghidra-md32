@@ -274,6 +274,12 @@ attach variables [ a0hl ] [
 	rn = r14 + offset;
 }
 
+# ADD two registers.
+:add16 rn, rm is op_15_8=0x88 & rm & rn { rn = rn + rm; }
+
+# SUB two registers.
+:sub16 rn, rm is op_15_8=0x89 & rm & rn { rn = rn - rm; }
+
 # AND two registers.
 :and16 rn, rm is op_15_8=0x8a & rm & rn { rn = rn & rm; }
 
