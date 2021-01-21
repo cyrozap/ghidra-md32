@@ -384,6 +384,11 @@ attach variables [ a0hl ] [
 	rn_r1_r8 = sext(*[DMEM]:1 (rm_r1_r8_5_3));
 }
 
+# Load zero-extended byte relative to a register between r1 and r8.
+:lbu16 rn_r1_r8, 0(rm_r1_r8_5_3) is op_15_6=0b1010001011 & rm_r1_r8_5_3 & rn_r1_r8 {
+	rn_r1_r8 = zext(*[DMEM]:1 (rm_r1_r8_5_3));
+}
+
 # Load word from an offset relative to a register between r1 and r8.
 :lw16 rn, offset^(rm_r1_r8_6_4) is op_15_10=0b101010 & imm_9_7 & rm_r1_r8_6_4 & rn [
 	offset = imm_9_7 * 4;
