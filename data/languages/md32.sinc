@@ -422,3 +422,6 @@ attach variables [ a0hl ] [
 :j16 rn is bundle=1 & op_15_4=0x203 & rn {
 	goto [rn];
 }
+
+# 16-bit NOP, bundled-only.
+:nop16.l is bundle=1 & op_15_0=0x2000 {}
