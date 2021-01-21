@@ -69,11 +69,13 @@ define token instr16(16)
 	simm_6_0 = (0, 6) signed
 	rm_r1_r8 = (4, 6)
 	rm = (4, 7)
+	rm_6_3 = (3, 6)
 	rn = (0, 3)
 	rn_even = (0, 2)
+	rn_odd = (0, 2)
 ;
 
-attach variables [ rd rs1 rs2 r_8_5 rn rm ] [
+attach variables [ rd rs1 rs2 r_8_5 rn rm rm_6_3 ] [
 	r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15
 ];
 
@@ -83,6 +85,10 @@ attach variables [ rm_r1_r8 ] [
 
 attach variables [ rn_even ] [
 	r0 r2 r4 r6 r8 r10 r12 r14
+];
+
+attach variables [ rn_odd ] [
+	r1 r3 r5 r7 r9 r11 r13 r15
 ];
 
 attach variables [ csrd ] [
@@ -408,6 +414,13 @@ attach variables [ a0hl ] [
 	globalset(inst_next, bundle);
 ] {
 	rn_even = r14 + calc_imm:4;
+}
+
+:mv16 rn_odd, rm_6_3 is bundle=0 & op_15_7=0b010010011 & rm_6_3 & rn_odd [
+	bundle = 1;
+	globalset(inst_next, bundle);
+] {
+	rn_odd = rm_6_3;
 }
 
 
