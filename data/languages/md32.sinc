@@ -285,6 +285,16 @@ attach variables [ a0hl ] [
 	*[DMEM](rd + simm_19_8) = rs1;
 }
 
+# Copy the (signed) max of the values of two registers into a register.
+:max rd, rs1, rs2 is bundle=0 & op_31_12=0x20000 & rs2 & rs1 & rd {
+	if (rs1 s> rs2) goto <rs1_greater>;
+	rd = rs2;
+	goto <end>;
+	<rs1_greater>
+	rd = rs1;
+	<end>
+}
+
 
 # Stand-alone 16-bit instructions.
 
