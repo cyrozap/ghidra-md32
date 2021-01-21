@@ -329,6 +329,30 @@ attach variables [ a0hl ] [
 	<end_high>
 }
 
+# Min of two 16-bit integers in two registers.
+:mind rd, rs1, rs2 is bundle=0 & op_31_12=0x20007 & rs2 & rs1 & rd {
+	local rs1_lo:2 = rs1:2;
+	local rs1_hi:2 = rs1(2);
+	local rs2_lo:2 = rs2:2;
+	local rs2_hi:2 = rs2(2);
+
+	# Find the signed minimum of the lower halves of rs1 and rs2.
+	if (rs1_lo s< rs2_lo) goto <rs1_low_lesser>;
+	rd = rs2 & 0xffff;
+	goto <end_low>;
+	<rs1_low_lesser>
+	rd = rs1 & 0xffff;
+	<end_low>
+
+	# Find the signed minimum of the upper halves of rs1 and rs2.
+	if (rs1_hi s< rs2_hi) goto <rs1_high_lesser>;
+	rd = rd | (rs2 & 0xffff0000);
+	goto <end_high>;
+	<rs1_high_lesser>
+	rd = rd | (rs1 & 0xffff0000);
+	<end_high>
+}
+
 
 # Stand-alone 16-bit instructions.
 
