@@ -295,6 +295,16 @@ attach variables [ a0hl ] [
 	<end>
 }
 
+# Copy the (signed) min of the values of two registers into a register.
+:min rd, rs1, rs2 is bundle=0 & op_31_12=0x20001 & rs2 & rs1 & rd {
+	if (rs1 s< rs2) goto <rs1_lesser>;
+	rd = rs2;
+	goto <end>;
+	<rs1_lesser>
+	rd = rs1;
+	<end>
+}
+
 # Max of two 16-bit integers in two registers.
 :maxd rd, rs1, rs2 is bundle=0 & op_31_12=0x20005 & rs2 & rs1 & rd {
 	local rs1_lo:2 = rs1:2;
