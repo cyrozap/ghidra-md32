@@ -368,7 +368,7 @@ attach variables [ a0hl ] [
 }
 
 # Add an unsigned immediate to the stack pointer and store it in a register.
-:add16 rn, "r14", #offset is op_15_10=0b100101 & imm_9_4 & rn [
+:add16 rn, r14, #offset is r14 & op_15_10=0b100101 & imm_9_4 & rn [
 	offset = -0x100 + imm_9_4 * 4;
 ] {
 	rn = r14 + offset;
@@ -390,7 +390,7 @@ attach variables [ a0hl ] [
 :xor16 rn, rm is op_15_8=0x8c & rm & rn { rn = rn ^ rm; }
 
 # Add an unsigned immediate to the stack pointer.
-:addsp16 "r14", #offset is op_15_8=0x92 & imm_7_0 [
+:addsp16 r14, #offset is r14 & op_15_8=0x92 & imm_7_0 [
 	offset = imm_7_0 * 4;
 ] {
 	r14 = r14 + offset;
@@ -465,7 +465,7 @@ attach variables [ a0hl ] [
 }
 
 # Load word from an offset relative to the stack pointer.
-:lw16 rn, #offset^("r14") is op_15_9=0b1010010 & imm_8_4 & rn [
+:lw16 rn, #offset^(r14) is r14 & op_15_9=0b1010010 & imm_8_4 & rn [
 	offset = -0x80 + imm_8_4 * 4;
 ] {
 	rn = *[DMEM](r14 + offset);
@@ -479,7 +479,7 @@ attach variables [ a0hl ] [
 }
 
 # Store word at an offset relative to the stack pointer.
-:sw16 rn, #offset^("r14") is op_15_9=0b1010011 & imm_8_4 & rn [
+:sw16 rn, #offset^(r14) is r14 & op_15_9=0b1010011 & imm_8_4 & rn [
 	offset = -0x80 + imm_8_4 * 4;
 ] {
 	*[DMEM](r14 + offset) = rn;
@@ -489,7 +489,7 @@ attach variables [ a0hl ] [
 # 16-bit instruction bundles/pairs, prefix instructions.
 
 # Add stack pointer to immediate and store in register.
-:add16 rn_even, "r14", #calc_imm is bundle=0 & op_15_9=0b0100101 & imm_8_3 & rn_even [
+:add16 rn_even, r14, #calc_imm is bundle=0 & r14 & op_15_9=0b0100101 & imm_8_3 & rn_even [
 	calc_imm = -0x100 | (imm_8_3 << 2);
 	bundle = 1;
 	globalset(inst_next, bundle);
