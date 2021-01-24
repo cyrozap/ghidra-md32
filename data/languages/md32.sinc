@@ -106,7 +106,7 @@ attach variables [ a0hl ] [
 # 32-bit instructions
 
 # Move signed immediate to register.
-:mv rd, simm_24_4 is bundle=0 & op_31_25=0 & simm_24_4 & rd {
+:mv rd, #simm_24_4 is bundle=0 & op_31_25=0 & simm_24_4 & rd {
 	rd = simm_24_4;
 }
 
@@ -146,22 +146,22 @@ attach variables [ a0hl ] [
 }
 
 # ADD a register with an immediate.
-:add rd, rs1, simm_23_8 is bundle=0 & op_31_24=0x08 & simm_23_8 & rs1 & rd {
+:add rd, rs1, #simm_23_8 is bundle=0 & op_31_24=0x08 & simm_23_8 & rs1 & rd {
 	rd = rs1 + simm_23_8;
 }
 
 # OR a register with an immediate.
-:or rd, rs1, imm_23_8 is bundle=0 & op_31_24=0x0d & imm_23_8 & rs1 & rd {
+:or rd, rs1, #imm_23_8 is bundle=0 & op_31_24=0x0d & imm_23_8 & rs1 & rd {
 	rd = rs1 | imm_23_8;
 }
 
 # Set the high 16 bits of a register, clearing the lower bits.
-:sethi rd, imm_23_8 is bundle=0 & op_31_24=0x0f & imm_23_8 & rs1=0 & rd {
+:sethi rd, #imm_23_8 is bundle=0 & op_31_24=0x0f & imm_23_8 & rs1=0 & rd {
 	rd = imm_23_8 << 16;
 }
 
 # Branch if less-than or equal, signed.
-:ble rs1, rd, jump_dest is bundle=0 & op_31_23=0b000110000 & simm_22_8 & rs1 & rd [
+:ble rs1, rd, #jump_dest is bundle=0 & op_31_23=0b000110000 & simm_22_8 & rs1 & rd [
 	jump_dest = inst_start + simm_22_8 * 2;
 ] {
 	if !(rs1 s<= rd) goto <skip>;
@@ -170,7 +170,7 @@ attach variables [ a0hl ] [
 }
 
 # Branch if immediate less than or equal to register, signed, delayed by 1.
-:ble calc_imm, r_8_5, jump_dest is bundle=0 & op_31_22=0b0001100010 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
+:ble #calc_imm, r_8_5, #jump_dest is bundle=0 & op_31_22=0b0001100010 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
 	calc_imm = (simm_21_18 << 5) | imm_4_0;
 	jump_dest = inst_start + simm_17_9 * 2;
 ] {
@@ -181,7 +181,7 @@ attach variables [ a0hl ] [
 }
 
 # Branch if register less than or equal to immediate, signed, delayed by 1.
-:ble.d1 r_8_5, calc_imm, jump_dest is bundle=0 & op_31_22=0b0001000011 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
+:ble.d1 r_8_5, #calc_imm, #jump_dest is bundle=0 & op_31_22=0b0001000011 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
 	calc_imm = (simm_21_18 << 5) | imm_4_0;
 	jump_dest = inst_start + simm_17_9 * 2;
 ] {
@@ -193,7 +193,7 @@ attach variables [ a0hl ] [
 }
 
 # Branch if less-than, signed.
-:blt rs1, rd, jump_dest is bundle=0 & op_31_23=0b000110100 & simm_22_8 & rs1 & rd [
+:blt rs1, rd, #jump_dest is bundle=0 & op_31_23=0b000110100 & simm_22_8 & rs1 & rd [
 	jump_dest = inst_start + simm_22_8 * 2;
 ] {
 	if !(rs1 s< rd) goto <skip>;
@@ -202,7 +202,7 @@ attach variables [ a0hl ] [
 }
 
 # Branch if register less than immediate, signed, delayed by 1.
-:blt.d1 r_8_5, calc_imm, jump_dest is bundle=0 & op_31_22=0b0001001011 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
+:blt.d1 r_8_5, #calc_imm, #jump_dest is bundle=0 & op_31_22=0b0001001011 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
 	calc_imm = (simm_21_18 << 5) | imm_4_0;
 	jump_dest = inst_start + simm_17_9 * 2;
 ] {
@@ -214,7 +214,7 @@ attach variables [ a0hl ] [
 }
 
 # Branch if less-than, unsigned.
-:bltu.d1 rs1, rd, jump_dest is bundle=0 & op_31_23=0b000100110 & simm_22_8 & rs1 & rd [
+:bltu.d1 rs1, rd, #jump_dest is bundle=0 & op_31_23=0b000100110 & simm_22_8 & rs1 & rd [
 	jump_dest = inst_start + simm_22_8 * 2;
 ] {
 	local delayflag = (rs1 < rd);
@@ -225,14 +225,14 @@ attach variables [ a0hl ] [
 }
 
 # Unconditional relative jump.
-:j jump_dest is bundle=0 & op_31_21=0b00011110000 & simm_20_0 [
+:j #jump_dest is bundle=0 & op_31_21=0b00011110000 & simm_20_0 [
 	jump_dest = inst_start + simm_20_0 * 2;
 ] {
 	goto [jump_dest:4];
 }
 
 # Unconditional relative jump with link.
-:jal jump_dest is bundle=0 & op_31_21=0b00011111000 & simm_20_0 [
+:jal #jump_dest is bundle=0 & op_31_21=0b00011111000 & simm_20_0 [
 	jump_dest = inst_start + simm_20_0 * 2;
 ] {
 	r15 = inst_next;
@@ -246,42 +246,42 @@ attach variables [ a0hl ] [
 }
 
 # Load byte from an offset relative to a register, zero extending.
-:lbu rs1, simm_19_8(rd) is bundle=0 & op_31_20=0x060 & simm_19_8 & rs1 & rd {
+:lbu rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x060 & simm_19_8 & rs1 & rd {
 	rs1 = zext(*[DMEM]:1 (rd + simm_19_8));
 }
 
 # Load half word from an offset relative to a register, zero extending.
-:lhu rs1, simm_19_8(rd) is bundle=0 & op_31_20=0x061 & simm_19_8 & rs1 & rd {
+:lhu rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x061 & simm_19_8 & rs1 & rd {
 	rs1 = zext(*[DMEM]:2 (rd + simm_19_8));
 }
 
 # Load byte from an offset relative to a register, sign extending.
-:lb rs1, simm_19_8(rd) is bundle=0 & op_31_20=0x062 & simm_19_8 & rs1 & rd {
+:lb rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x062 & simm_19_8 & rs1 & rd {
 	rs1 = sext(*[DMEM]:1 (rd + simm_19_8));
 }
 
 # Load half word from an offset relative to a register, sign extending.
-:lh rs1, simm_19_8(rd) is bundle=0 & op_31_20=0x063 & simm_19_8 & rs1 & rd {
+:lh rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x063 & simm_19_8 & rs1 & rd {
 	rs1 = sext(*[DMEM]:2 (rd + simm_19_8));
 }
 
 # Load word from an offset relative to a register.
-:lw rs1, simm_19_8(rd) is bundle=0 & op_31_20=0x064 & simm_19_8 & rs1 & rd {
+:lw rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x064 & simm_19_8 & rs1 & rd {
 	rs1 = *[DMEM](rd + simm_19_8);
 }
 
 # Store byte at an offset relative to a register.
-:sb rs1, simm_19_8(rd) is bundle=0 & op_31_20=0x065 & simm_19_8 & rs1 & rd {
+:sb rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x065 & simm_19_8 & rs1 & rd {
 	*[DMEM](rd + simm_19_8) = rs1:1;
 }
 
 # Store half word at an offset relative to a register.
-:sh rs1, simm_19_8(rd) is bundle=0 & op_31_20=0x066 & simm_19_8 & rs1 & rd {
+:sh rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x066 & simm_19_8 & rs1 & rd {
 	*[DMEM](rd + simm_19_8) = rs1:2;
 }
 
 # Store word at an offset relative to a register.
-:sw rs1, simm_19_8(rd) is bundle=0 & op_31_20=0x067 & simm_19_8 & rs1 & rd {
+:sw rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x067 & simm_19_8 & rs1 & rd {
 	*[DMEM](rd + simm_19_8) = rs1;
 }
 
@@ -363,12 +363,12 @@ attach variables [ a0hl ] [
 :nop16.l is op_15_0=0xa000 {}
 
 # Add a signed immediate to a register.
-:add16 rn, simm_8_4 is op_15_9=0b1000011 & simm_8_4 & rn {
+:add16 rn, #simm_8_4 is op_15_9=0b1000011 & simm_8_4 & rn {
 	rn = rn + simm_8_4;
 }
 
 # Add an unsigned immediate to the stack pointer and store it in a register.
-:add16 rn, "r14", offset is op_15_10=0b100101 & imm_9_4 & rn [
+:add16 rn, "r14", #offset is op_15_10=0b100101 & imm_9_4 & rn [
 	offset = -0x100 + imm_9_4 * 4;
 ] {
 	rn = r14 + offset;
@@ -390,14 +390,14 @@ attach variables [ a0hl ] [
 :xor16 rn, rm is op_15_8=0x8c & rm & rn { rn = rn ^ rm; }
 
 # Add an unsigned immediate to the stack pointer.
-:addsp16 "r14", offset is op_15_8=0x92 & imm_7_0 [
+:addsp16 "r14", #offset is op_15_8=0x92 & imm_7_0 [
 	offset = imm_7_0 * 4;
 ] {
 	r14 = r14 + offset;
 }
 
 # Branch if not equal to zero.
-:bne16.d1 0x0, rn, jump_dest is op_15_9=0b1011101 & imm_8_4 & rn [
+:bne16.d1 #0x0, rn, #jump_dest is op_15_9=0b1011101 & imm_8_4 & rn [
 	jump_dest = inst_start + imm_8_4 * 2;
 ] {
 	local delayflag = (0 != rn);
@@ -430,7 +430,7 @@ attach variables [ a0hl ] [
 }
 
 # Unconditional relative jump by immediate, delayed by 1.
-:j16.d1 jump_dest is op_15_7=0b101000010 & simm_6_0 [
+:j16.d1 #jump_dest is op_15_7=0b101000010 & simm_6_0 [
 	jump_dest = inst_start + simm_6_0 * 2;
 ] {
 	delayslot(1);
@@ -443,43 +443,43 @@ attach variables [ a0hl ] [
 }
 
 # Move immediate to register.
-:mv16 rn, simm_10_4 is op_15_11=0b10011 & simm_10_4 & rn {
+:mv16 rn, #simm_10_4 is op_15_11=0b10011 & simm_10_4 & rn {
 	rn = simm_10_4;
 }
 
 # Load sign-extended byte relative to a register between r1 and r8.
-:lb16 rn_r1_r8, 0(rm_r1_r8_5_3) is op_15_6=0b1010001010 & rm_r1_r8_5_3 & rn_r1_r8 {
+:lb16 rn_r1_r8, #0(rm_r1_r8_5_3) is op_15_6=0b1010001010 & rm_r1_r8_5_3 & rn_r1_r8 {
 	rn_r1_r8 = sext(*[DMEM]:1 (rm_r1_r8_5_3));
 }
 
 # Load zero-extended byte relative to a register between r1 and r8.
-:lbu16 rn_r1_r8, 0(rm_r1_r8_5_3) is op_15_6=0b1010001011 & rm_r1_r8_5_3 & rn_r1_r8 {
+:lbu16 rn_r1_r8, #0(rm_r1_r8_5_3) is op_15_6=0b1010001011 & rm_r1_r8_5_3 & rn_r1_r8 {
 	rn_r1_r8 = zext(*[DMEM]:1 (rm_r1_r8_5_3));
 }
 
 # Load word from an offset relative to a register between r1 and r8.
-:lw16 rn, offset^(rm_r1_r8_6_4) is op_15_10=0b101010 & imm_9_7 & rm_r1_r8_6_4 & rn [
+:lw16 rn, #offset^(rm_r1_r8_6_4) is op_15_10=0b101010 & imm_9_7 & rm_r1_r8_6_4 & rn [
 	offset = imm_9_7 * 4;
 ] {
 	rn = *[DMEM](rm_r1_r8_6_4 + offset);
 }
 
 # Load word from an offset relative to the stack pointer.
-:lw16 rn, offset^("r14") is op_15_9=0b1010010 & imm_8_4 & rn [
+:lw16 rn, #offset^("r14") is op_15_9=0b1010010 & imm_8_4 & rn [
 	offset = -0x80 + imm_8_4 * 4;
 ] {
 	rn = *[DMEM](r14 + offset);
 }
 
 # Store word at an offset relative to a register between r1 and r8.
-:sw16 rn, offset^(rm_r1_r8_6_4) is op_15_10=0b101011 & imm_9_7 & rm_r1_r8_6_4 & rn [
+:sw16 rn, #offset^(rm_r1_r8_6_4) is op_15_10=0b101011 & imm_9_7 & rm_r1_r8_6_4 & rn [
 	offset = imm_9_7 * 4;
 ] {
 	*[DMEM](rm_r1_r8_6_4 + offset) = rn;
 }
 
 # Store word at an offset relative to the stack pointer.
-:sw16 rn, offset^("r14") is op_15_9=0b1010011 & imm_8_4 & rn [
+:sw16 rn, #offset^("r14") is op_15_9=0b1010011 & imm_8_4 & rn [
 	offset = -0x80 + imm_8_4 * 4;
 ] {
 	*[DMEM](r14 + offset) = rn;
@@ -489,7 +489,7 @@ attach variables [ a0hl ] [
 # 16-bit instruction bundles/pairs, prefix instructions.
 
 # Add stack pointer to immediate and store in register.
-:add16 rn_even, "r14", calc_imm is bundle=0 & op_15_9=0b0100101 & imm_8_3 & rn_even [
+:add16 rn_even, "r14", #calc_imm is bundle=0 & op_15_9=0b0100101 & imm_8_3 & rn_even [
 	calc_imm = -0x100 | (imm_8_3 << 2);
 	bundle = 1;
 	globalset(inst_next, bundle);
