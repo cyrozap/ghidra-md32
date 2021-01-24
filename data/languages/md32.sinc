@@ -397,7 +397,8 @@ attach variables [ a0hl ] [
 }
 
 # Branch if not equal to zero.
-:bne16.d1 #0x0, rn, #jump_dest is op_15_9=0b1011101 & imm_8_4 & rn [
+:bne16.d1 #zero, rn, #jump_dest is op_15_9=0b1011101 & imm_8_4 & rn [
+	zero = 0;
 	jump_dest = inst_start + imm_8_4 * 2;
 ] {
 	local delayflag = (0 != rn);
@@ -448,12 +449,16 @@ attach variables [ a0hl ] [
 }
 
 # Load sign-extended byte relative to a register between r1 and r8.
-:lb16 rn_r1_r8, #0(rm_r1_r8_5_3) is op_15_6=0b1010001010 & rm_r1_r8_5_3 & rn_r1_r8 {
+:lb16 rn_r1_r8, #offset^(rm_r1_r8_5_3) is op_15_6=0b1010001010 & rm_r1_r8_5_3 & rn_r1_r8 [
+	offset = 0;
+] {
 	rn_r1_r8 = sext(*[DMEM]:1 (rm_r1_r8_5_3));
 }
 
 # Load zero-extended byte relative to a register between r1 and r8.
-:lbu16 rn_r1_r8, #0(rm_r1_r8_5_3) is op_15_6=0b1010001011 & rm_r1_r8_5_3 & rn_r1_r8 {
+:lbu16 rn_r1_r8, #offset^(rm_r1_r8_5_3) is op_15_6=0b1010001011 & rm_r1_r8_5_3 & rn_r1_r8 [
+	offset = 0;
+] {
 	rn_r1_r8 = zext(*[DMEM]:1 (rm_r1_r8_5_3));
 }
 
