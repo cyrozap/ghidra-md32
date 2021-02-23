@@ -30,11 +30,13 @@ define token instr32(32)
 	op_31_21 = (21, 31)
 	op_31_20 = (20, 31)
 	op_31_17 = (17, 31)
+	op_31_13 = (13, 31)
 	op_31_12 = (12, 31)
 	op_31_8 = (8, 31)
 	op_31_4 = (4, 31)
 	op_15_13 = (13, 15)
 	imm_23_8 = (8, 23)
+	imm_12_8 = (8, 12)
 	imm_4_0 = (0, 4)
 	simm_24_4 = (4, 24) signed
 	simm_23_8 = (8, 23) signed
@@ -143,6 +145,21 @@ attach variables [ a0hl ] [
 # Move from register to CSR.
 :mv csrd, rs1 is bundle=0 & op_31_8=0x041820 & rs1 & csrd {
 	csrd = rs1;
+}
+
+# Shift register right (logical) by an immediate.
+:srl rd, rs1, #imm_12_8 is bundle=0 & op_31_13=0b0000010000011100011 & imm_12_8 & rs1 & rd {
+	rd = rs1 >> imm_12_8;
+}
+
+# Shift register right (arithmetic) by an immediate.
+:sra rd, rs1, #imm_12_8 is bundle=0 & op_31_13=0b0000010000011101011 & imm_12_8 & rs1 & rd {
+	rd = rs1 s>> imm_12_8;
+}
+
+# Shift register left (logical) by an immediate.
+:sll rd, rs1, #imm_12_8 is bundle=0 & op_31_13=0b0000010000011110011 & imm_12_8 & rs1 & rd {
+	rd = rs1 << imm_12_8;
 }
 
 # ADD a register with an immediate.
