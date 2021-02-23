@@ -168,7 +168,7 @@ attach variables [ a0hl ] [
 	goto [jump_dest:4];
 }
 
-# Branch if immediate less than or equal to register, signed, delayed by 1.
+# Branch if immediate less than or equal to register, signed.
 :ble #calc_imm, r_8_5, #jump_dest is bundle=0 & op_31_22=0b0001100010 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
 	calc_imm = (simm_21_18 << 5) | imm_4_0;
 	jump_dest = inst_start + simm_17_9 * 2;
