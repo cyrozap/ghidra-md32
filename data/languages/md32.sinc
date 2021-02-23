@@ -164,9 +164,8 @@ attach variables [ a0hl ] [
 :ble rs1, rd, #jump_dest is bundle=0 & op_31_23=0b000110000 & simm_22_8 & rs1 & rd [
 	jump_dest = inst_start + simm_22_8 * 2;
 ] {
-	if !(rs1 s<= rd) goto <skip>;
+	if !(rs1 s<= rd) goto inst_next;
 	goto [jump_dest:4];
-	<skip>
 }
 
 # Branch if immediate less than or equal to register, signed, delayed by 1.
@@ -175,9 +174,8 @@ attach variables [ a0hl ] [
 	jump_dest = inst_start + simm_17_9 * 2;
 ] {
 	local flag = (calc_imm:4 s<= r_8_5);
-	if !flag goto <skip>;
+	if !flag goto inst_next;
 	goto [jump_dest:4];
-	<skip>
 }
 
 # Branch if register less than or equal to immediate, signed, delayed by 1.
@@ -187,18 +185,16 @@ attach variables [ a0hl ] [
 ] {
 	local delayflag = (r_8_5 s<= calc_imm:4);
 	delayslot(1);
-	if !delayflag goto <skip>;
+	if !delayflag goto inst_next;
 	goto [jump_dest:4];
-	<skip>
 }
 
 # Branch if less-than, signed.
 :blt rs1, rd, #jump_dest is bundle=0 & op_31_23=0b000110100 & simm_22_8 & rs1 & rd [
 	jump_dest = inst_start + simm_22_8 * 2;
 ] {
-	if !(rs1 s< rd) goto <skip>;
+	if !(rs1 s< rd) goto inst_next;
 	goto [jump_dest:4];
-	<skip>
 }
 
 # Branch if register less than immediate, signed, delayed by 1.
@@ -208,9 +204,8 @@ attach variables [ a0hl ] [
 ] {
 	local delayflag = (r_8_5 s< calc_imm:4);
 	delayslot(1);
-	if !delayflag goto <skip>;
+	if !delayflag goto inst_next;
 	goto [jump_dest:4];
-	<skip>
 }
 
 # Branch if less-than, unsigned.
@@ -219,9 +214,8 @@ attach variables [ a0hl ] [
 ] {
 	local delayflag = (rs1 < rd);
 	delayslot(1);
-	if !delayflag goto <skip>;
+	if !delayflag goto inst_next;
 	goto [jump_dest:4];
-	<skip>
 }
 
 # Unconditional relative jump.
@@ -403,9 +397,8 @@ attach variables [ a0hl ] [
 ] {
 	local delayflag = (0 != rn);
 	delayslot(1);
-	if !delayflag goto <skip>;
+	if !delayflag goto inst_next;
 	goto [jump_dest:4];
-	<skip>
 }
 
 # Unconditional absolute jump to register 15 (link register), delayed by 2.
