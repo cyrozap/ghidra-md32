@@ -218,6 +218,24 @@ attach variables [ a0hl ] [
 	goto [jump_dest:4];
 }
 
+# Branch if registers are not equal.
+:bne rs1, rd, #jump_dest is bundle=0 & op_31_23=0b000111010 & simm_22_8 & rs1 & rd [
+	jump_dest = inst_start + simm_22_8 * 2;
+] {
+	if !(rs1 != rd) goto inst_next;
+	goto [jump_dest:4];
+}
+
+# Branch if immediate not equal to register.
+:bne #calc_imm, r_8_5, #jump_dest is bundle=0 & op_31_22=0b0001110110 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
+	calc_imm = (simm_21_18 << 5) | imm_4_0;
+	jump_dest = inst_start + simm_17_9 * 2;
+] {
+	local flag = (calc_imm:4 != r_8_5);
+	if !flag goto inst_next;
+	goto [jump_dest:4];
+}
+
 # Unconditional relative jump.
 :j #jump_dest is bundle=0 & op_31_21=0b00011110000 & simm_20_0 [
 	jump_dest = inst_start + simm_20_0 * 2;
