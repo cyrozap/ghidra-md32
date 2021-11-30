@@ -49,6 +49,7 @@ define token instr32(32)
 	op_31_0 = (0, 31)
 	op_15_13 = (13, 15)
 	imm_23_8 = (8, 23)
+	imm_12_12 = (12, 12)
 	imm_12_8 = (8, 12)
 	imm_4_0 = (0, 4)
 	simm_24_4 = (4, 24) signed
@@ -409,6 +410,13 @@ with: bundle=0 {
 	<rs1_lesser>
 	rd = rs1;
 	<end>
+}
+
+# ADD a register with a register and an immediate.
+:add rd, rs1, #imm is op_31_13=0b0010000000000000001 & imm_12_12 & rs2 & rs1 & rd [
+	imm = imm_12_12 + 1;
+] {
+	rd = rs1 + rs2 + imm;
 }
 
 # Max of two 16-bit integers in two registers.
