@@ -15,6 +15,7 @@ define register offset=0x100 size=4 [
 	ls0 le0 lc0
 	ls1 le1 lc1
 	ls2 le2 lc2
+	dbg
 ];
 
 define register offset=0x200 size=4 [
@@ -370,6 +371,16 @@ with: bundle=0 {
 # Store word at an offset relative to a register.
 :sw rs1, #simm_19_8(rd) is op_31_20=0x067 & simm_19_8 & rs1 & rd {
 	*[DMEM](rd + simm_19_8) = rs1;
+}
+
+# Move from dbg CSR to register.
+:mv rd, dbg is op_31_4=0x0700800 & rd & dbg {
+	rd = dbg;
+}
+
+# Move from register to dbg CSR.
+:mv dbg, rd is op_31_4=0x0700801 & rd & dbg {
+	dbg = rd;
 }
 
 :ieon is op_31_0=0x07008020 {
