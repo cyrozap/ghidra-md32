@@ -45,6 +45,7 @@ define token instr32(32)
 	op_31_12 = (12, 31)
 	op_31_8 = (8, 31)
 	op_31_4 = (4, 31)
+	op_31_0 = (0, 31)
 	op_15_13 = (13, 15)
 	imm_23_8 = (8, 23)
 	imm_12_8 = (8, 12)
@@ -110,6 +111,10 @@ attach variables [ rn_odd ] [
 attach variables [ csrd csrs1 ] [
 	sr ipc isr _ lf ls0 le0 lc0 ls1 le1 lc1 ls2 le2 lc2 _ _
 ];
+
+
+define pcodeop ieon;
+define pcodeop ieoff;
 
 
 # 32-bit instructions
@@ -363,6 +368,14 @@ attach variables [ csrd csrs1 ] [
 # Store word at an offset relative to a register.
 :sw rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x067 & simm_19_8 & rs1 & rd {
 	*[DMEM](rd + simm_19_8) = rs1;
+}
+
+:ieon is bundle=0 & op_31_0=0x07008020 {
+	ieon();
+}
+
+:ieoff is bundle=0 & op_31_0=0x07008021 {
+	ieoff();
 }
 
 # Copy the (signed) max of the values of two registers into a register.
