@@ -21,6 +21,10 @@ define register offset=0x200 size=4 [
 	a0h a0l
 ];
 
+define register offset=0x200 size=8 [
+	a0
+];
+
 define register offset=0x1000 size=4 pc;
 
 define register offset=0x2000 size=4 contextreg;
@@ -52,9 +56,9 @@ define token instr32(32)
 	simm_20_0 = (0, 20) signed
 	simm_19_8 = (8, 19) signed
 	simm_17_9 = (9, 17) signed
-	a0hl = (16, 16)
 	r_8_5 = (5, 8)
 	rs2 = (8, 11)
+	csrs1 = (4, 7)
 	rs1 = (4, 7)
 	csrd = (0, 3)
 	rd = (0, 3)
@@ -103,12 +107,8 @@ attach variables [ rn_odd ] [
 	r1 r3 r5 r7 r9 r11 r13 r15
 ];
 
-attach variables [ csrd ] [
+attach variables [ csrd csrs1 ] [
 	sr ipc isr _ lf ls0 le0 lc0 ls1 le1 lc1 ls2 le2 lc2 _ _
-];
-
-attach variables [ a0hl ] [
-	a0h a0l
 ];
 
 
@@ -144,13 +144,39 @@ attach variables [ a0hl ] [
 	<end>
 }
 
-# Move from accumulator(?) to register.
-:mv rd, a0hl is bundle=0 & op_31_17=0b000001000001011 & a0hl & op_15_13=0b001 & rd {
-	rd = a0hl;
+# Move from registers to accumulator(?).
+:mv a0, rs1, rs2 is bundle=0 & op_31_12=0x0412c & rs2 & rs1 & a0 {
+	a0l = rs1;
+	a0h = rs2;
+}
+
+# Move from register to accumulator(?) low.
+:mv a0l, rs1 is bundle=0 & op_31_12=0x04134 & rs1 & a0l {
+	a0l = rs1;
+}
+
+# Move from register to accumulator(?) high.
+:mv a0h, rs2 is bundle=0 & op_31_12=0x04148 & rs2 & a0h {
+	a0h = rs2;
+}
+
+# Move from CSR to register.
+:mv rd, csrs1 is bundle=0 & op_31_12=0x04154 & csrs1 & rd {
+	rd = csrs1;
+}
+
+# Move from accumulator(?) high to register.
+:mv rd, a0h is bundle=0 & op_31_12=0x04162 & rd & a0h {
+	rd = a0h;
+}
+
+# Move from accumulator(?) low to register.
+:mv rd, a0l is bundle=0 & op_31_12=0x04172 & rd & a0l {
+	rd = a0l;
 }
 
 # Move from register to CSR.
-:mv csrd, rs1 is bundle=0 & op_31_8=0x041820 & rs1 & csrd {
+:mv csrd, rs1 is bundle=0 & op_31_12=0x04182 & rs1 & csrd {
 	csrd = rs1;
 }
 
