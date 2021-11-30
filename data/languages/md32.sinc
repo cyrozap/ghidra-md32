@@ -119,26 +119,28 @@ define pcodeop ieoff;
 
 # 32-bit instructions
 
+with: bundle=0 {
+
 # Move signed immediate to register.
-:mv rd, #simm_24_4 is bundle=0 & op_31_25=0 & simm_24_4 & rd {
+:mv rd, #simm_24_4 is op_31_25=0 & simm_24_4 & rd {
 	rd = simm_24_4;
 }
 
 # Unsigned division.
-:udiv rd, rs2 is bundle=0 & op_31_12=0x040dc & rs2 & rd {
+:udiv rd, rs2 is op_31_12=0x040dc & rs2 & rd {
 	a0l = rd / rs2;
 	a0h = rd % rs2;
 }
 
 # Also unsigned division. Maybe the u/s are for unsaturating/saturating?
 # TODO: Find out how sdiv differs from udiv.
-:sdiv rd, rs2 is bundle=0 & op_31_12=0x040dd & rs2 & rd {
+:sdiv rd, rs2 is op_31_12=0x040dd & rs2 & rd {
 	a0l = rd / rs2;
 	a0h = rd % rs2;
 }
 
 # Conditional inversion.
-:cinv rd, rs1, rs2 is bundle=0 & op_31_12=0x0407e & rs2 & rs1 & rd {
+:cinv rd, rs1, rs2 is op_31_12=0x0407e & rs2 & rs1 & rd {
 	# If rs1 is positive, rd=rs2.
 	if (rs1 s< 0) goto <negative>;
 	rd = rs2;
@@ -150,73 +152,73 @@ define pcodeop ieoff;
 }
 
 # Move from registers to accumulator(?).
-:mv a0, rs1, rs2 is bundle=0 & op_31_12=0x0412c & rs2 & rs1 & a0 {
+:mv a0, rs1, rs2 is op_31_12=0x0412c & rs2 & rs1 & a0 {
 	a0l = rs1;
 	a0h = rs2;
 }
 
 # Move from register to accumulator(?) low.
-:mv a0l, rs1 is bundle=0 & op_31_12=0x04134 & rs1 & a0l {
+:mv a0l, rs1 is op_31_12=0x04134 & rs1 & a0l {
 	a0l = rs1;
 }
 
 # Move from register to accumulator(?) high.
-:mv a0h, rs2 is bundle=0 & op_31_12=0x04148 & rs2 & a0h {
+:mv a0h, rs2 is op_31_12=0x04148 & rs2 & a0h {
 	a0h = rs2;
 }
 
 # Move from CSR to register.
-:mv rd, csrs1 is bundle=0 & op_31_12=0x04154 & csrs1 & rd {
+:mv rd, csrs1 is op_31_12=0x04154 & csrs1 & rd {
 	rd = csrs1;
 }
 
 # Move from accumulator(?) high to register.
-:mv rd, a0h is bundle=0 & op_31_12=0x04162 & rd & a0h {
+:mv rd, a0h is op_31_12=0x04162 & rd & a0h {
 	rd = a0h;
 }
 
 # Move from accumulator(?) low to register.
-:mv rd, a0l is bundle=0 & op_31_12=0x04172 & rd & a0l {
+:mv rd, a0l is op_31_12=0x04172 & rd & a0l {
 	rd = a0l;
 }
 
 # Move from register to CSR.
-:mv csrd, rs1 is bundle=0 & op_31_12=0x04182 & rs1 & csrd {
+:mv csrd, rs1 is op_31_12=0x04182 & rs1 & csrd {
 	csrd = rs1;
 }
 
 # Shift register right (logical) by an immediate.
-:srl rd, rs1, #imm_12_8 is bundle=0 & op_31_13=0b0000010000011100011 & imm_12_8 & rs1 & rd {
+:srl rd, rs1, #imm_12_8 is op_31_13=0b0000010000011100011 & imm_12_8 & rs1 & rd {
 	rd = rs1 >> imm_12_8;
 }
 
 # Shift register right (arithmetic) by an immediate.
-:sra rd, rs1, #imm_12_8 is bundle=0 & op_31_13=0b0000010000011101011 & imm_12_8 & rs1 & rd {
+:sra rd, rs1, #imm_12_8 is op_31_13=0b0000010000011101011 & imm_12_8 & rs1 & rd {
 	rd = rs1 s>> imm_12_8;
 }
 
 # Shift register left (logical) by an immediate.
-:sll rd, rs1, #imm_12_8 is bundle=0 & op_31_13=0b0000010000011110011 & imm_12_8 & rs1 & rd {
+:sll rd, rs1, #imm_12_8 is op_31_13=0b0000010000011110011 & imm_12_8 & rs1 & rd {
 	rd = rs1 << imm_12_8;
 }
 
 # ADD a register with an immediate.
-:add rd, rs1, #simm_23_8 is bundle=0 & op_31_24=0x08 & simm_23_8 & rs1 & rd {
+:add rd, rs1, #simm_23_8 is op_31_24=0x08 & simm_23_8 & rs1 & rd {
 	rd = rs1 + simm_23_8;
 }
 
 # OR a register with an immediate.
-:or rd, rs1, #imm_23_8 is bundle=0 & op_31_24=0x0d & imm_23_8 & rs1 & rd {
+:or rd, rs1, #imm_23_8 is op_31_24=0x0d & imm_23_8 & rs1 & rd {
 	rd = rs1 | imm_23_8;
 }
 
 # Set the high 16 bits of a register, clearing the lower bits.
-:sethi rd, #imm_23_8 is bundle=0 & op_31_24=0x0f & imm_23_8 & rs1=0 & rd {
+:sethi rd, #imm_23_8 is op_31_24=0x0f & imm_23_8 & rs1=0 & rd {
 	rd = imm_23_8 << 16;
 }
 
 # Branch if less-than or equal, signed.
-:ble rs1, rd, #jump_dest is bundle=0 & op_31_23=0b000110000 & simm_22_8 & rs1 & rd [
+:ble rs1, rd, #jump_dest is op_31_23=0b000110000 & simm_22_8 & rs1 & rd [
 	jump_dest = inst_start + simm_22_8 * 2;
 ] {
 	if !(rs1 s<= rd) goto inst_next;
@@ -224,7 +226,7 @@ define pcodeop ieoff;
 }
 
 # Branch if immediate less than or equal to register, signed.
-:ble #calc_imm, r_8_5, #jump_dest is bundle=0 & op_31_22=0b0001100010 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
+:ble #calc_imm, r_8_5, #jump_dest is op_31_22=0b0001100010 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
 	calc_imm = (simm_21_18 << 5) | imm_4_0;
 	jump_dest = inst_start + simm_17_9 * 2;
 ] {
@@ -234,7 +236,7 @@ define pcodeop ieoff;
 }
 
 # Branch if register less than or equal to immediate, signed, delayed by 1.
-:ble.d1 r_8_5, #calc_imm, #jump_dest is bundle=0 & op_31_22=0b0001000011 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
+:ble.d1 r_8_5, #calc_imm, #jump_dest is op_31_22=0b0001000011 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
 	calc_imm = (simm_21_18 << 5) | imm_4_0;
 	jump_dest = inst_start + simm_17_9 * 2;
 ] {
@@ -245,7 +247,7 @@ define pcodeop ieoff;
 }
 
 # Branch if less-than, signed.
-:blt rs1, rd, #jump_dest is bundle=0 & op_31_23=0b000110100 & simm_22_8 & rs1 & rd [
+:blt rs1, rd, #jump_dest is op_31_23=0b000110100 & simm_22_8 & rs1 & rd [
 	jump_dest = inst_start + simm_22_8 * 2;
 ] {
 	if !(rs1 s< rd) goto inst_next;
@@ -253,7 +255,7 @@ define pcodeop ieoff;
 }
 
 # Branch if register less than immediate, signed, delayed by 1.
-:blt.d1 r_8_5, #calc_imm, #jump_dest is bundle=0 & op_31_22=0b0001001011 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
+:blt.d1 r_8_5, #calc_imm, #jump_dest is op_31_22=0b0001001011 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
 	calc_imm = (simm_21_18 << 5) | imm_4_0;
 	jump_dest = inst_start + simm_17_9 * 2;
 ] {
@@ -264,7 +266,7 @@ define pcodeop ieoff;
 }
 
 # Branch if less-than, unsigned.
-:bltu.d1 rs1, rd, #jump_dest is bundle=0 & op_31_23=0b000100110 & simm_22_8 & rs1 & rd [
+:bltu.d1 rs1, rd, #jump_dest is op_31_23=0b000100110 & simm_22_8 & rs1 & rd [
 	jump_dest = inst_start + simm_22_8 * 2;
 ] {
 	local delayflag = (rs1 < rd);
@@ -274,7 +276,7 @@ define pcodeop ieoff;
 }
 
 # Branch if registers are equal.
-:beq rs1, rd, #jump_dest is bundle=0 & op_31_23=0b000111000 & simm_22_8 & rs1 & rd [
+:beq rs1, rd, #jump_dest is op_31_23=0b000111000 & simm_22_8 & rs1 & rd [
 	jump_dest = inst_start + simm_22_8 * 2;
 ] {
 	if !(rs1 == rd) goto inst_next;
@@ -282,7 +284,7 @@ define pcodeop ieoff;
 }
 
 # Branch if immediate equal to register.
-:beq #calc_imm, r_8_5, #jump_dest is bundle=0 & op_31_22=0b0001110010 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
+:beq #calc_imm, r_8_5, #jump_dest is op_31_22=0b0001110010 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
 	calc_imm = (simm_21_18 << 5) | imm_4_0;
 	jump_dest = inst_start + simm_17_9 * 2;
 ] {
@@ -292,7 +294,7 @@ define pcodeop ieoff;
 }
 
 # Branch if registers are not equal.
-:bne rs1, rd, #jump_dest is bundle=0 & op_31_23=0b000111010 & simm_22_8 & rs1 & rd [
+:bne rs1, rd, #jump_dest is op_31_23=0b000111010 & simm_22_8 & rs1 & rd [
 	jump_dest = inst_start + simm_22_8 * 2;
 ] {
 	if !(rs1 != rd) goto inst_next;
@@ -300,7 +302,7 @@ define pcodeop ieoff;
 }
 
 # Branch if immediate not equal to register.
-:bne #calc_imm, r_8_5, #jump_dest is bundle=0 & op_31_22=0b0001110110 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
+:bne #calc_imm, r_8_5, #jump_dest is op_31_22=0b0001110110 & simm_21_18 & simm_17_9 & r_8_5 & imm_4_0 [
 	calc_imm = (simm_21_18 << 5) | imm_4_0;
 	jump_dest = inst_start + simm_17_9 * 2;
 ] {
@@ -310,14 +312,14 @@ define pcodeop ieoff;
 }
 
 # Unconditional relative jump.
-:j #jump_dest is bundle=0 & op_31_21=0b00011110000 & simm_20_0 [
+:j #jump_dest is op_31_21=0b00011110000 & simm_20_0 [
 	jump_dest = inst_start + simm_20_0 * 2;
 ] {
 	goto [jump_dest:4];
 }
 
 # Unconditional relative jump with link.
-:jal #jump_dest is bundle=0 & op_31_21=0b00011111000 & simm_20_0 [
+:jal #jump_dest is op_31_21=0b00011111000 & simm_20_0 [
 	jump_dest = inst_start + simm_20_0 * 2;
 ] {
 	r15 = inst_next;
@@ -325,61 +327,61 @@ define pcodeop ieoff;
 }
 
 # Unconditional absolute jump to register with link.
-:jal rd is bundle=0 & op_31_4=0x1f80000 & rd {
+:jal rd is op_31_4=0x1f80000 & rd {
 	r15 = inst_next;
 	call [rd];
 }
 
 # Load byte from an offset relative to a register, zero extending.
-:lbu rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x060 & simm_19_8 & rs1 & rd {
+:lbu rs1, #simm_19_8(rd) is op_31_20=0x060 & simm_19_8 & rs1 & rd {
 	rs1 = zext(*[DMEM]:1 (rd + simm_19_8));
 }
 
 # Load half word from an offset relative to a register, zero extending.
-:lhu rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x061 & simm_19_8 & rs1 & rd {
+:lhu rs1, #simm_19_8(rd) is op_31_20=0x061 & simm_19_8 & rs1 & rd {
 	rs1 = zext(*[DMEM]:2 (rd + simm_19_8));
 }
 
 # Load byte from an offset relative to a register, sign extending.
-:lb rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x062 & simm_19_8 & rs1 & rd {
+:lb rs1, #simm_19_8(rd) is op_31_20=0x062 & simm_19_8 & rs1 & rd {
 	rs1 = sext(*[DMEM]:1 (rd + simm_19_8));
 }
 
 # Load half word from an offset relative to a register, sign extending.
-:lh rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x063 & simm_19_8 & rs1 & rd {
+:lh rs1, #simm_19_8(rd) is op_31_20=0x063 & simm_19_8 & rs1 & rd {
 	rs1 = sext(*[DMEM]:2 (rd + simm_19_8));
 }
 
 # Load word from an offset relative to a register.
-:lw rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x064 & simm_19_8 & rs1 & rd {
+:lw rs1, #simm_19_8(rd) is op_31_20=0x064 & simm_19_8 & rs1 & rd {
 	rs1 = *[DMEM](rd + simm_19_8);
 }
 
 # Store byte at an offset relative to a register.
-:sb rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x065 & simm_19_8 & rs1 & rd {
+:sb rs1, #simm_19_8(rd) is op_31_20=0x065 & simm_19_8 & rs1 & rd {
 	*[DMEM](rd + simm_19_8) = rs1:1;
 }
 
 # Store half word at an offset relative to a register.
-:sh rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x066 & simm_19_8 & rs1 & rd {
+:sh rs1, #simm_19_8(rd) is op_31_20=0x066 & simm_19_8 & rs1 & rd {
 	*[DMEM](rd + simm_19_8) = rs1:2;
 }
 
 # Store word at an offset relative to a register.
-:sw rs1, #simm_19_8(rd) is bundle=0 & op_31_20=0x067 & simm_19_8 & rs1 & rd {
+:sw rs1, #simm_19_8(rd) is op_31_20=0x067 & simm_19_8 & rs1 & rd {
 	*[DMEM](rd + simm_19_8) = rs1;
 }
 
-:ieon is bundle=0 & op_31_0=0x07008020 {
+:ieon is op_31_0=0x07008020 {
 	ieon();
 }
 
-:ieoff is bundle=0 & op_31_0=0x07008021 {
+:ieoff is op_31_0=0x07008021 {
 	ieoff();
 }
 
 # Copy the (signed) max of the values of two registers into a register.
-:max rd, rs1, rs2 is bundle=0 & op_31_12=0x20000 & rs2 & rs1 & rd {
+:max rd, rs1, rs2 is op_31_12=0x20000 & rs2 & rs1 & rd {
 	if (rs1 s> rs2) goto <rs1_greater>;
 	rd = rs2;
 	goto <end>;
@@ -389,7 +391,7 @@ define pcodeop ieoff;
 }
 
 # Copy the (signed) min of the values of two registers into a register.
-:min rd, rs1, rs2 is bundle=0 & op_31_12=0x20001 & rs2 & rs1 & rd {
+:min rd, rs1, rs2 is op_31_12=0x20001 & rs2 & rs1 & rd {
 	if (rs1 s< rs2) goto <rs1_lesser>;
 	rd = rs2;
 	goto <end>;
@@ -399,7 +401,7 @@ define pcodeop ieoff;
 }
 
 # Max of two 16-bit integers in two registers.
-:maxd rd, rs1, rs2 is bundle=0 & op_31_12=0x20005 & rs2 & rs1 & rd {
+:maxd rd, rs1, rs2 is op_31_12=0x20005 & rs2 & rs1 & rd {
 	local rs1_lo:2 = rs1:2;
 	local rs1_hi:2 = rs1(2);
 	local rs2_lo:2 = rs2:2;
@@ -423,7 +425,7 @@ define pcodeop ieoff;
 }
 
 # Min of two 16-bit integers in two registers.
-:mind rd, rs1, rs2 is bundle=0 & op_31_12=0x20007 & rs2 & rs1 & rd {
+:mind rd, rs1, rs2 is op_31_12=0x20007 & rs2 & rs1 & rd {
 	local rs1_lo:2 = rs1:2;
 	local rs1_hi:2 = rs1(2);
 	local rs2_lo:2 = rs2:2;
@@ -444,6 +446,8 @@ define pcodeop ieoff;
 	<rs1_high_lesser>
 	rd = rd | (rs1 & 0xffff0000);
 	<end_high>
+}
+
 }
 
 
@@ -585,8 +589,10 @@ define pcodeop ieoff;
 
 # 16-bit instruction bundles/pairs, prefix instructions.
 
+with: bundle=0 {
+
 # Add stack pointer to immediate and store in register.
-:add16 rn_even, r14, #calc_imm is bundle=0 & r14 & op_15_9=0b0100101 & imm_8_3 & rn_even [
+:add16 rn_even, r14, #calc_imm is r14 & op_15_9=0b0100101 & imm_8_3 & rn_even [
 	calc_imm = -0x100 | (imm_8_3 << 2);
 	bundle = 1;
 	globalset(inst_next, bundle);
@@ -594,25 +600,31 @@ define pcodeop ieoff;
 	rn_even = r14 + calc_imm:4;
 }
 
-:mv16 rn_odd, rm_6_3 is bundle=0 & op_15_7=0b010010011 & rm_6_3 & rn_odd [
+:mv16 rn_odd, rm_6_3 is op_15_7=0b010010011 & rm_6_3 & rn_odd [
 	bundle = 1;
 	globalset(inst_next, bundle);
 ] {
 	rn_odd = rm_6_3;
 }
 
+}
+
 
 # 16-bit instruction bundles/pairs, postfix instructions.
 
+with: bundle=1 {
+
 # Unconditional absolute jump to register 15 (link register).
-:j16 rn is bundle=1 & op_15_4=0x203 & rn & rn=15 {
+:j16 rn is op_15_4=0x203 & rn & rn=15 {
 	return [rn];
 }
 
 # Unconditional absolute jump to register.
-:j16 rn is bundle=1 & op_15_4=0x203 & rn {
+:j16 rn is op_15_4=0x203 & rn {
 	goto [rn];
 }
 
 # 16-bit NOP, bundled-only.
-:nop16.l is bundle=1 & op_15_0=0x2000 {}
+:nop16.l is op_15_0=0x2000 {}
+
+}
