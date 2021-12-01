@@ -334,6 +334,12 @@ with: bundle=0 {
 	call [rd];
 }
 
+# Return from interrupt.
+# FIXME: Properly implement returning from an interrupt (this is just a placeholder to make decompilation work).
+:rti is op_31_0=0x05a00000 {
+	return [pc];
+}
+
 # Load byte from an offset relative to a register, zero extending.
 :lbu rs1, #simm_19_8(rd) is op_31_20=0x060 & simm_19_8 & rs1 & rd {
 	rs1 = zext(*[DMEM]:1 (rd + simm_19_8));
