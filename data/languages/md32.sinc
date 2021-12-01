@@ -68,6 +68,7 @@ define token instr32(32)
 ;
 
 define token instr16(16)
+	op_15_15 = (15, 15)
 	op_15_11 = (11, 15)
 	op_15_10 = (10, 15)
 	op_15_9 = (9, 15)
@@ -76,6 +77,12 @@ define token instr16(16)
 	op_15_6 = (6, 15)
 	op_15_4 = (4, 15)
 	op_15_0 = (0, 15)
+	op_14_10 = (10, 14)
+	op_14_9 = (9, 14)
+	op_14_7 = (7, 14)
+	op_14_6 = (6, 14)
+	op_14_4 = (4, 14)
+	op_14_0 = (0, 14)
 	imm_9_7 = (7, 9)
 	imm_9_4 = (4, 9)
 	imm_8_4 = (4, 8)
@@ -476,13 +483,12 @@ with: bundle=0 {
 }
 
 
-# Stand-alone 16-bit instructions.
+# Stand-alone 16-bit instructions (unbundled/unpaired only).
+
+with: bundle=0 {
 
 # 16-bit NOP.
 :nop16 is op_15_0=0x8000 {}
-
-# Another 16-bit NOP.
-:nop16.l is op_15_0=0xa000 {}
 
 # Add a signed immediate to a register.
 :add16 rn, #simm_8_4 is op_15_9=0b1000011 & simm_8_4 & rn {
@@ -518,47 +524,6 @@ with: bundle=0 {
 	r14 = r14 + offset;
 }
 
-# Branch if not equal to zero.
-:bne16.d1 #zero, rn, #jump_dest is op_15_9=0b1011101 & imm_8_4 & rn [
-	zero = 0;
-	jump_dest = inst_start + imm_8_4 * 2;
-] {
-	local delayflag = (0 != rn);
-	delayslot(1);
-	if !delayflag goto inst_next;
-	goto [jump_dest:4];
-}
-
-# Unconditional absolute jump to register 15 (link register), delayed by 2.
-:j16.d2 rn is op_15_4=0xa02 & rn & rn=15 {
-	delayslot(2);
-	return [rn];
-}
-
-# Unconditional absolute jump to register, delayed by 2.
-:j16.d2 rn is op_15_4=0xa02 & rn {
-	delayslot(2);
-	goto [rn];
-}
-
-# Unconditional absolute jump to register 15 (link register).
-:j16 rn is op_15_4=0xa03 & rn & rn=15 {
-	return [rn];
-}
-
-# Unconditional absolute jump to register.
-:j16 rn is op_15_4=0xa03 & rn {
-	goto [rn];
-}
-
-# Unconditional relative jump by immediate, delayed by 1.
-:j16.d1 #jump_dest is op_15_7=0b101000010 & simm_6_0 [
-	jump_dest = inst_start + simm_6_0 * 2;
-] {
-	delayslot(1);
-	goto [jump_dest:4];
-}
-
 # Move data from register to register.
 :mv16 rn, rm is op_15_8=0x93 & rm & rn {
 	rn = rm;
@@ -569,46 +534,99 @@ with: bundle=0 {
 	rn = simm_10_4;
 }
 
+}
+
+
+# 16-bit instructions that may either stand alone or be the second instruction in a bundle.
+
+with: (bundle=0 & op_15_15=1) | (bundle=1 & op_15_15=0) {
+
+# Another 16-bit NOP.
+:nop16.l is op_14_0=0x2000 {}
+
+# Branch if not equal to zero.
+:bne16.d1 #zero, rn, #jump_dest is op_14_9=0b011101 & imm_8_4 & rn [
+	zero = 0;
+	jump_dest = inst_start + imm_8_4 * 2;
+] {
+	local delayflag = (0 != rn);
+	delayslot(1);
+	if !delayflag goto inst_next;
+	goto [jump_dest:4];
+}
+
+# Unconditional absolute jump to register 15 (link register), delayed by 2.
+:j16.d2 rn is op_14_4=0x202 & rn & rn=15 {
+	delayslot(2);
+	return [rn];
+}
+
+# Unconditional absolute jump to register, delayed by 2.
+:j16.d2 rn is op_14_4=0x202 & rn {
+	delayslot(2);
+	goto [rn];
+}
+
+# Unconditional absolute jump to register 15 (link register).
+:j16 rn is op_14_4=0x203 & rn & rn=15 {
+	return [rn];
+}
+
+# Unconditional absolute jump to register.
+:j16 rn is op_14_4=0x203 & rn {
+	goto [rn];
+}
+
+# Unconditional relative jump by immediate, delayed by 1.
+:j16.d1 #jump_dest is op_14_7=0b01000010 & simm_6_0 [
+	jump_dest = inst_start + simm_6_0 * 2;
+] {
+	delayslot(1);
+	goto [jump_dest:4];
+}
+
 # Load sign-extended byte relative to a register between r1 and r8.
-:lb16 rn_r1_r8, #offset^(rm_r1_r8_5_3) is op_15_6=0b1010001010 & rm_r1_r8_5_3 & rn_r1_r8 [
+:lb16 rn_r1_r8, #offset^(rm_r1_r8_5_3) is op_14_6=0b010001010 & rm_r1_r8_5_3 & rn_r1_r8 [
 	offset = 0;
 ] {
 	rn_r1_r8 = sext(*[DMEM]:1 (rm_r1_r8_5_3));
 }
 
 # Load zero-extended byte relative to a register between r1 and r8.
-:lbu16 rn_r1_r8, #offset^(rm_r1_r8_5_3) is op_15_6=0b1010001011 & rm_r1_r8_5_3 & rn_r1_r8 [
+:lbu16 rn_r1_r8, #offset^(rm_r1_r8_5_3) is op_14_6=0b010001011 & rm_r1_r8_5_3 & rn_r1_r8 [
 	offset = 0;
 ] {
 	rn_r1_r8 = zext(*[DMEM]:1 (rm_r1_r8_5_3));
 }
 
 # Load word from an offset relative to a register between r1 and r8.
-:lw16 rn, #offset^(rm_r1_r8_6_4) is op_15_10=0b101010 & imm_9_7 & rm_r1_r8_6_4 & rn [
+:lw16 rn, #offset^(rm_r1_r8_6_4) is op_14_10=0b01010 & imm_9_7 & rm_r1_r8_6_4 & rn [
 	offset = imm_9_7 * 4;
 ] {
 	rn = *[DMEM](rm_r1_r8_6_4 + offset);
 }
 
 # Load word from an offset relative to the stack pointer.
-:lw16 rn, #offset^(r14) is r14 & op_15_9=0b1010010 & imm_8_4 & rn [
+:lw16 rn, #offset^(r14) is r14 & op_14_9=0b010010 & imm_8_4 & rn [
 	offset = -0x80 + imm_8_4 * 4;
 ] {
 	rn = *[DMEM](r14 + offset);
 }
 
 # Store word at an offset relative to a register between r1 and r8.
-:sw16 rn, #offset^(rm_r1_r8_6_4) is op_15_10=0b101011 & imm_9_7 & rm_r1_r8_6_4 & rn [
+:sw16 rn, #offset^(rm_r1_r8_6_4) is op_14_10=0b01011 & imm_9_7 & rm_r1_r8_6_4 & rn [
 	offset = imm_9_7 * 4;
 ] {
 	*[DMEM](rm_r1_r8_6_4 + offset) = rn;
 }
 
 # Store word at an offset relative to the stack pointer.
-:sw16 rn, #offset^(r14) is r14 & op_15_9=0b1010011 & imm_8_4 & rn [
+:sw16 rn, #offset^(r14) is r14 & op_14_9=0b010011 & imm_8_4 & rn [
 	offset = -0x80 + imm_8_4 * 4;
 ] {
 	*[DMEM](r14 + offset) = rn;
+}
+
 }
 
 
@@ -638,18 +656,5 @@ with: bundle=0 {
 # 16-bit instruction bundles/pairs, postfix instructions.
 
 with: bundle=1 {
-
-# Unconditional absolute jump to register 15 (link register).
-:j16 rn is op_15_4=0x203 & rn & rn=15 {
-	return [rn];
-}
-
-# Unconditional absolute jump to register.
-:j16 rn is op_15_4=0x203 & rn {
-	goto [rn];
-}
-
-# 16-bit NOP, bundled-only.
-:nop16.l is op_15_0=0x2000 {}
 
 }
