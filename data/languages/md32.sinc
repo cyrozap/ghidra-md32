@@ -89,6 +89,7 @@ define token instr16(16)
 	imm_8_3 = (3, 8)
 	imm_7_0 = (0, 7)
 	simm_10_4 = (4, 10) signed
+	simm_9_7 = (7, 9) signed
 	simm_8_4 = (4, 8) signed
 	simm_6_0 = (0, 6) signed
 	rm = (4, 7)
@@ -660,6 +661,24 @@ with: (bundle=0 & op_15_15=1) | (bundle=1 & op_15_15=0) {
 	offset = -0x80 + imm_8_4 * 4;
 ] {
 	*[DMEM](r14 + offset) = rn;
+}
+
+# Load word from an address in a register between r1 and r8, then offset the address in that register.
+# TODO: Confirm the semantics of this instruction on hardware.
+:lw16 rn, (rm_r1_r8_6_4+=#offset) is op_14_10=0b01100 & simm_9_7 & rm_r1_r8_6_4 & rn [
+	offset = simm_9_7 * 4;
+] {
+	rn = *[DMEM](rm_r1_r8_6_4);
+	rm_r1_r8_6_4 = rm_r1_r8_6_4 + offset;
+}
+
+# Store word at an address in a register between r1 and r8, then offset the address in that register.
+# TODO: Confirm the semantics of this instruction on hardware.
+:sw16 rn, (rm_r1_r8_6_4+=#offset) is op_14_10=0b01101 & simm_9_7 & rm_r1_r8_6_4 & rn [
+	offset = simm_9_7 * 4;
+] {
+	*[DMEM](rm_r1_r8_6_4) = rn;
+	rm_r1_r8_6_4 = rm_r1_r8_6_4 + offset;
 }
 
 }
