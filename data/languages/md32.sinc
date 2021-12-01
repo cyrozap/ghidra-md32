@@ -86,6 +86,7 @@ define token instr16(16)
 	op_8_6 = (6, 8)
 	imm_9_7 = (7, 9)
 	imm_9_4 = (4, 9)
+	imm_8_6 = (6, 8)
 	imm_8_4 = (4, 8)
 	imm_8_3 = (3, 8)
 	imm_7_0 = (0, 7)
@@ -508,6 +509,11 @@ with: op_15_9=0b1000000 {
 	:and16 rn_r1_r8, rm_r1_r8_5_3, #mask is op_8_6=5 & rm_r1_r8_5_3 & rn_r1_r8 [ mask = 0xff; ] { rn_r1_r8 = rm_r1_r8_5_3 & mask; }
 	:and16 rn_r1_r8, rm_r1_r8_5_3, #mask is op_8_6=6 & rm_r1_r8_5_3 & rn_r1_r8 [ mask = 0xff00; ] { rn_r1_r8 = rm_r1_r8_5_3 & mask; }
 	:and16 rn_r1_r8, rm_r1_r8_5_3, #mask is op_8_6=7 & rm_r1_r8_5_3 & rn_r1_r8 [ mask = 0xffff; ] { rn_r1_r8 = rm_r1_r8_5_3 & mask; }
+}
+
+# Shift register left (logical) by an immediate.
+:sll16 rn_r1_r8, rm_r1_r8_5_3, #imm_8_6 is op_15_9=0b1000001 & imm_8_6 & rm_r1_r8_5_3 & rn_r1_r8 {
+	rn_r1_r8 = rm_r1_r8_5_3 << imm_8_6;
 }
 
 # ADD two registers.
