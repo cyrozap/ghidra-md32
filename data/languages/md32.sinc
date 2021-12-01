@@ -93,6 +93,7 @@ define token instr16(16)
 	simm_9_7 = (7, 9) signed
 	simm_8_4 = (4, 8) signed
 	simm_6_0 = (0, 6) signed
+	rm_r1_r8_8_6 = (6, 8)
 	rm = (4, 7)
 	rm_r1_r8_6_4 = (4, 6)
 	rm_6_3 = (3, 6)
@@ -107,7 +108,7 @@ attach variables [ rd rs1 rs2 r_8_5 rn rm rm_6_3 ] [
 	r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15
 ];
 
-attach variables [ rn_r1_r8 rm_r1_r8_5_3 rm_r1_r8_6_4 ] [
+attach variables [ rn_r1_r8 rm_r1_r8_5_3 rm_r1_r8_6_4 rm_r1_r8_8_6 ] [
 	r1 r2 r3 r4 r5 r6 r7 r8
 ];
 
@@ -508,6 +509,9 @@ with: op_15_9=0b1000000 {
 	:and16 rn_r1_r8, rm_r1_r8_5_3, #mask is op_8_6=6 & rm_r1_r8_5_3 & rn_r1_r8 [ mask = 0xff00; ] { rn_r1_r8 = rm_r1_r8_5_3 & mask; }
 	:and16 rn_r1_r8, rm_r1_r8_5_3, #mask is op_8_6=7 & rm_r1_r8_5_3 & rn_r1_r8 [ mask = 0xffff; ] { rn_r1_r8 = rm_r1_r8_5_3 & mask; }
 }
+
+# ADD two registers.
+:add16 rn_r1_r8, rm_r1_r8_5_3, rm_r1_r8_8_6 is op_15_9=0b1000010 & rm_r1_r8_8_6 & rm_r1_r8_5_3 & rn_r1_r8 { rn_r1_r8 = rm_r1_r8_5_3 + rm_r1_r8_8_6; }
 
 # Add a signed immediate to a register.
 :add16 rn, #simm_8_4 is op_15_9=0b1000011 & simm_8_4 & rn {
