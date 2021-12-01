@@ -89,6 +89,7 @@ define token instr16(16)
 	imm_8_6 = (6, 8)
 	imm_8_4 = (4, 8)
 	imm_8_3 = (3, 8)
+	imm_7_4 = (4, 7)
 	imm_7_0 = (0, 7)
 	simm_10_4 = (4, 10) signed
 	simm_9_7 = (7, 9) signed
@@ -545,6 +546,16 @@ with: op_15_9=0b1000000 {
 
 # XOR two registers.
 :xor16 rn, rm is op_15_8=0x8c & rm & rn { rn = rn ^ rm; }
+
+# Shift register right (arithmetic) by an immediate.
+:sra16 rn, #imm_7_4 is op_15_8=0x90 & imm_7_4 & rn {
+	rn = rn s>> imm_7_4;
+}
+
+# Shift register left by an immediate.
+:sll16 rn, #imm_7_4 is op_15_8=0x91 & imm_7_4 & rn {
+	rn = rn << imm_7_4;
+}
 
 # Add an unsigned immediate to the stack pointer.
 :addsp16 r14, #offset is r14 & op_15_8=0x92 & imm_7_0 [
