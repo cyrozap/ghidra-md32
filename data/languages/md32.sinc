@@ -342,6 +342,9 @@ with: bundle=0 {
 	call [rd];
 }
 
+# 32-bit NOP.
+:nop is op_31_0=0x05000000 {}
+
 # Return from interrupt.
 # FIXME: Properly implement returning from an interrupt (this is just a placeholder to make decompilation work).
 :rti is op_31_0=0x05a00000 {
