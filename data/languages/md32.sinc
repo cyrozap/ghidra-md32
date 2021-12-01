@@ -79,6 +79,7 @@ define token instr16(16)
 	op_15_0 = (0, 15)
 	op_14_10 = (10, 14)
 	op_14_9 = (9, 14)
+	op_14_8 = (8, 14)
 	op_14_7 = (7, 14)
 	op_14_6 = (6, 14)
 	op_14_4 = (4, 14)
@@ -802,6 +803,38 @@ with: (bundle=0 & op_15_15=1) | (bundle=1 & op_15_15=0) {
 	offset = simm_8_6 * 2;
 ] {
 	rn_r1_r8 = zext(*[DMEM]:2 (rm_r1_r8_5_3));
+	rm_r1_r8_5_3 = rm_r1_r8_5_3 + offset;
+}
+
+# Move data from register to register.
+:mv16.l rn, rm is op_14_8=0x70 & rm & rn {
+	rn = rm;
+}
+
+# Store byte at an address in a register between r1 and r8, then offset the address in that register.
+# TODO: Confirm the semantics of this instruction on hardware.
+:sb16 rm_6_3, (rn_r1_r8+=#offset) is op_14_10=0b11110 & simm_9_7 & rm_6_3 & rn_r1_r8 [
+	offset = simm_9_7 * 1;
+] {
+	*[DMEM](rn_r1_r8) = rm_6_3:1;
+	rn_r1_r8 = rn_r1_r8 + offset;
+}
+
+# Load sign-extended byte relative to a register between r1 and r8, then offset the address in that register.
+# TODO: Confirm the semantics of this instruction on hardware.
+:lb16 rn_r1_r8, (rm_r1_r8_5_3+=#offset) is op_14_9=0b111110 & simm_8_6 & rm_r1_r8_5_3 & rn_r1_r8 [
+	offset = simm_8_6 * 1;
+] {
+	rn_r1_r8 = sext(*[DMEM]:1 (rm_r1_r8_5_3));
+	rm_r1_r8_5_3 = rm_r1_r8_5_3 + offset;
+}
+
+# Load zero-extended byte relative to a register between r1 and r8, then offset the address in that register.
+# TODO: Confirm the semantics of this instruction on hardware.
+:lbu16 rn_r1_r8, (rm_r1_r8_5_3+=#offset) is op_14_9=0b111111 & simm_8_6 & rm_r1_r8_5_3 & rn_r1_r8 [
+	offset = simm_8_6 * 1;
+] {
+	rn_r1_r8 = zext(*[DMEM]:1 (rm_r1_r8_5_3));
 	rm_r1_r8_5_3 = rm_r1_r8_5_3 + offset;
 }
 
