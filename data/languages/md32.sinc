@@ -845,6 +845,9 @@ with: (bundle=0 & op_15_15=1) | (bundle=1 & op_15_15=0) {
 
 with: bundle=0 {
 
+# 16-bit NOP.
+:nop16 is op_15_0=0x4000 [ bundle = 1; globalset(inst_next, bundle); ] {}
+
 # Add stack pointer to immediate and store in register.
 :add16 rn_even, r14, #calc_imm is r14 & op_15_9=0b0100101 & imm_8_3 & rn_even [
 	calc_imm = -0x100 | (imm_8_3 << 2);
