@@ -83,6 +83,7 @@ define token instr16(16)
 	op_14_6 = (6, 14)
 	op_14_4 = (4, 14)
 	op_14_0 = (0, 14)
+	op_8_6 = (6, 8)
 	imm_9_7 = (7, 9)
 	imm_9_4 = (4, 9)
 	imm_8_4 = (4, 8)
@@ -499,6 +500,14 @@ with: bundle=0 {
 
 # 16-bit NOP.
 :nop16 is op_15_0=0x8000 {}
+
+# AND an unsigned immediate with a register between r1 and r8 to a register between r1 and r8.
+with: op_15_9=0b1000000 {
+	:and16 rn_r1_r8, rm_r1_r8_5_3, #mask is (op_8_6=1 | op_8_6=2 | op_8_6=3 | op_8_6=4) & op_8_6 & rm_r1_r8_5_3 & rn_r1_r8 [ mask = (1 << op_8_6) - 1; ] { rn_r1_r8 = rm_r1_r8_5_3 & mask; }
+	:and16 rn_r1_r8, rm_r1_r8_5_3, #mask is op_8_6=5 & rm_r1_r8_5_3 & rn_r1_r8 [ mask = 0xff; ] { rn_r1_r8 = rm_r1_r8_5_3 & mask; }
+	:and16 rn_r1_r8, rm_r1_r8_5_3, #mask is op_8_6=6 & rm_r1_r8_5_3 & rn_r1_r8 [ mask = 0xff00; ] { rn_r1_r8 = rm_r1_r8_5_3 & mask; }
+	:and16 rn_r1_r8, rm_r1_r8_5_3, #mask is op_8_6=7 & rm_r1_r8_5_3 & rn_r1_r8 [ mask = 0xffff; ] { rn_r1_r8 = rm_r1_r8_5_3 & mask; }
+}
 
 # Add a signed immediate to a register.
 :add16 rn, #simm_8_4 is op_15_9=0b1000011 & simm_8_4 & rn {
