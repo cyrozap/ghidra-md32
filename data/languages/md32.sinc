@@ -554,17 +554,6 @@ with: (bundle=0 & op_15_15=1) | (bundle=1 & op_15_15=0) {
 # Another 16-bit NOP.
 :nop16.l is op_14_0=0x2000 {}
 
-# Branch if not equal to zero.
-:bne16.d1 #zero, rn, #jump_dest is op_14_9=0b011101 & imm_8_4 & rn [
-	zero = 0;
-	jump_dest = inst_start + imm_8_4 * 2;
-] {
-	local delayflag = (0 != rn);
-	delayslot(2);
-	if !delayflag goto inst_next;
-	goto [jump_dest:4];
-}
-
 # Unconditional absolute jump to register 15 (link register), delayed by 2.
 # FIXME: See below.
 :j16.d2 rn is op_14_4=0x202 & rn & rn=15 {
@@ -693,6 +682,48 @@ with: (bundle=0 & op_15_15=1) | (bundle=1 & op_15_15=0) {
 ] {
 	*[DMEM](rm_r1_r8_6_4) = rn;
 	rm_r1_r8_6_4 = rm_r1_r8_6_4 + offset;
+}
+
+# Branch if register equal to zero, delayed by 1.
+:beq16.d1 #zero, rn, #jump_dest is op_14_9=0b011100 & imm_8_4 & rn [
+	zero = 0;
+	jump_dest = inst_start + imm_8_4 * 2;
+] {
+	local delayflag = (0 == rn);
+	delayslot(2);
+	if !delayflag goto inst_next;
+	goto [jump_dest:4];
+}
+
+# Branch if register not equal to zero, delayed by 1.
+:bne16.d1 #zero, rn, #jump_dest is op_14_9=0b011101 & imm_8_4 & rn [
+	zero = 0;
+	jump_dest = inst_start + imm_8_4 * 2;
+] {
+	local delayflag = (0 != rn);
+	delayslot(2);
+	if !delayflag goto inst_next;
+	goto [jump_dest:4];
+}
+
+# Branch if register equal to zero.
+:beq16 #zero, rn, #jump_dest is op_14_9=0b011110 & imm_8_4 & rn [
+	zero = 0;
+	jump_dest = inst_start + imm_8_4 * 2;
+] {
+	local flag = (0 == rn);
+	if !flag goto inst_next;
+	goto [jump_dest:4];
+}
+
+# Branch if register not equal to zero.
+:bne16 #zero, rn, #jump_dest is op_14_9=0b011111 & imm_8_4 & rn [
+	zero = 0;
+	jump_dest = inst_start + imm_8_4 * 2;
+] {
+	local flag = (0 != rn);
+	if !flag goto inst_next;
+	goto [jump_dest:4];
 }
 
 }
