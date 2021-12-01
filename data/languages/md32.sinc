@@ -252,7 +252,7 @@ with: bundle=0 {
 	jump_dest = inst_start + simm_17_9 * 2;
 ] {
 	local delayflag = (r_8_5 s<= calc_imm:4);
-	delayslot(1);
+	delayslot(2);
 	if !delayflag goto inst_next;
 	goto [jump_dest:4];
 }
@@ -271,7 +271,7 @@ with: bundle=0 {
 	jump_dest = inst_start + simm_17_9 * 2;
 ] {
 	local delayflag = (r_8_5 s< calc_imm:4);
-	delayslot(1);
+	delayslot(2);
 	if !delayflag goto inst_next;
 	goto [jump_dest:4];
 }
@@ -281,7 +281,7 @@ with: bundle=0 {
 	jump_dest = inst_start + simm_22_8 * 2;
 ] {
 	local delayflag = (rs1 < rd);
-	delayslot(1);
+	delayslot(2);
 	if !delayflag goto inst_next;
 	goto [jump_dest:4];
 }
@@ -560,20 +560,25 @@ with: (bundle=0 & op_15_15=1) | (bundle=1 & op_15_15=0) {
 	jump_dest = inst_start + imm_8_4 * 2;
 ] {
 	local delayflag = (0 != rn);
-	delayslot(1);
+	delayslot(2);
 	if !delayflag goto inst_next;
 	goto [jump_dest:4];
 }
 
 # Unconditional absolute jump to register 15 (link register), delayed by 2.
+# FIXME: See below.
 :j16.d2 rn is op_14_4=0x202 & rn & rn=15 {
-	delayslot(2);
+	delayslot(4);
 	return [rn];
 }
 
 # Unconditional absolute jump to register, delayed by 2.
+# FIXME: The "delayslot(4)" statement only covers half of the possibilities
+# (a 2-byte instruction followed by either a 2-byte or 4-byte instruction),
+# and does not handle the case where a 4-byte instruction is followed by
+# either a 2-byte or 4-byte instruction.
 :j16.d2 rn is op_14_4=0x202 & rn {
-	delayslot(2);
+	delayslot(4);
 	goto [rn];
 }
 
@@ -591,7 +596,7 @@ with: (bundle=0 & op_15_15=1) | (bundle=1 & op_15_15=0) {
 :j16.d1 #jump_dest is op_14_7=0b01000010 & simm_6_0 [
 	jump_dest = inst_start + simm_6_0 * 2;
 ] {
-	delayslot(1);
+	delayslot(2);
 	goto [jump_dest:4];
 }
 
