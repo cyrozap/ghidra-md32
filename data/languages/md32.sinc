@@ -581,7 +581,7 @@ with: op_15_9=0b1000000 {
 
 # 16-bit instructions that may either stand alone or be the second instruction in a bundle.
 
-with: (bundle=0 & op_15_15=1) | (bundle=1 & op_15_15=0) {
+with: (bundle=0 & op_15_15=1) | bundle=1 {
 
 # Another 16-bit NOP.
 :nop16.l is op_14_0=0x2000 {}
