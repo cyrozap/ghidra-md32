@@ -585,6 +585,27 @@ with: (bundle=0 & op_15_15=1) | (bundle=1 & op_15_15=0) {
 	goto [jump_dest:4];
 }
 
+# Unconditional relative jump by immediate.
+:j16 #jump_dest is op_14_7=0b01000011 & simm_6_0 [
+	jump_dest = inst_start + simm_6_0 * 2;
+] {
+	goto [jump_dest:4];
+}
+
+# Load sign-extended half word relative to a register between r1 and r8.
+:lh16 rn_r1_r8, #offset^(rm_r1_r8_5_3) is op_14_6=0b010001000 & rm_r1_r8_5_3 & rn_r1_r8 [
+	offset = 0;
+] {
+	rn_r1_r8 = sext(*[DMEM]:2 (rm_r1_r8_5_3));
+}
+
+# Load zero-extended half word relative to a register between r1 and r8.
+:lhu16 rn_r1_r8, #offset^(rm_r1_r8_5_3) is op_14_6=0b010001001 & rm_r1_r8_5_3 & rn_r1_r8 [
+	offset = 0;
+] {
+	rn_r1_r8 = zext(*[DMEM]:2 (rm_r1_r8_5_3));
+}
+
 # Load sign-extended byte relative to a register between r1 and r8.
 :lb16 rn_r1_r8, #offset^(rm_r1_r8_5_3) is op_14_6=0b010001010 & rm_r1_r8_5_3 & rn_r1_r8 [
 	offset = 0;
@@ -597,6 +618,20 @@ with: (bundle=0 & op_15_15=1) | (bundle=1 & op_15_15=0) {
 	offset = 0;
 ] {
 	rn_r1_r8 = zext(*[DMEM]:1 (rm_r1_r8_5_3));
+}
+
+# Store half word at an offset relative to a register between r1 and r8.
+:sh16 rn, #offset^(rm_r1_r8_6_4) is op_14_7=0b01000110 & rm_r1_r8_6_4 & rn [
+	offset = 0;
+] {
+	*[DMEM](rm_r1_r8_6_4 + offset) = rn:2;
+}
+
+# Store byte at an offset relative to a register between r1 and r8.
+:sb16 rn, #offset^(rm_r1_r8_6_4) is op_14_7=0b01000111 & rm_r1_r8_6_4 & rn [
+	offset = 0;
+] {
+	*[DMEM](rm_r1_r8_6_4 + offset) = rn:1;
 }
 
 # Load word from an offset relative to a register between r1 and r8.
