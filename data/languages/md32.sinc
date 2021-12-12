@@ -19,7 +19,7 @@ define register offset=0x100 size=4 [
 ];
 
 define register offset=0x200 size=4 [
-	a0h a0l
+	a0l a0h
 ];
 
 define register offset=0x200 size=8 [
@@ -1210,7 +1210,7 @@ with: op_15_9=0b1000000 {
 :mv16 rn_r1_r8, a0l is op_15_3=0b1100000010010 & rn_r1_r8 & a0l { rn_r1_r8 = a0l; }
 :mv16 rn_r1_r8, a0h is op_15_3=0b1100000010011 & rn_r1_r8 & a0h { rn_r1_r8 = a0h; }
 
-:mac16 rn, rm is op_15_8=0xc1 & rm & rn unimpl
+:mac16 rn, rm is op_15_8=0xc1 & rm & rn { a0 = a0 + (sext(rn) * sext(rm)); }
 
 :maxv16 rn, rm is op_15_8=0xc2 & rm & rn unimpl
 :minv16 rn, rm is op_15_8=0xc3 & rm & rn unimpl
