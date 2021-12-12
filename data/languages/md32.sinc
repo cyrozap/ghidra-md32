@@ -97,6 +97,7 @@ define token instr16(16)
 	op_15_7 = (7, 15)
 	op_15_6 = (6, 15)
 	op_15_4 = (4, 15)
+	op_15_3 = (3, 15)
 	op_15_0 = (0, 15)
 	op_14_10 = (10, 14)
 	op_14_9 = (9, 14)
@@ -107,12 +108,15 @@ define token instr16(16)
 	op_14_0 = (0, 14)
 	op_8_6 = (6, 8)
 	imm_9_7 = (7, 9)
+	imm_9_6 = (6, 9)
 	imm_9_4 = (4, 9)
 	imm_8_6 = (6, 8)
 	imm_8_4 = (4, 8)
 	imm_8_3 = (3, 8)
 	imm_7_4 = (4, 7)
 	imm_7_0 = (0, 7)
+	imm_6_6 = (6, 6)
+	imm_6_3 = (3, 6)
 	simm_10_4 = (4, 10) signed
 	simm_9_7 = (7, 9) signed
 	simm_8_6 = (6, 8) signed
@@ -121,8 +125,10 @@ define token instr16(16)
 	rm_r1_r8_8_6 = (6, 8)
 	rm = (4, 7)
 	rm_r1_r8_6_4 = (4, 6)
+	csrm_6_3 = (3, 6)
 	rm_6_3 = (3, 6)
 	rm_r1_r8_5_3 = (3, 5)
+	csrn = (0, 3)
 	rn = (0, 3)
 	rn_even = (0, 2)
 	rn_odd = (0, 2)
@@ -145,7 +151,7 @@ attach variables [ rn_odd ] [
 	r1 r3 r5 r7 r9 r11 r13 r15
 ];
 
-attach variables [ csrd csrs1 ] [
+attach variables [ csrd csrs1 csrn csrm_6_3 ] [
 	sr ipc isr _ lf ls0 le0 lc0 ls1 le1 lc1 ls2 le2 lc2 _ _
 ];
 
@@ -1189,6 +1195,36 @@ with: op_15_9=0b1000000 {
 :mv16 rn, #simm_10_4 is op_15_11=0b10011 & simm_10_4 & rn {
 	rn = simm_10_4;
 }
+
+:xtd16 rn_r1_r8, rm_r1_r8_5_3, #const is op_15_7=0b110000000 & imm_6_6 & rm_r1_r8_5_3 & rn_r1_r8 [ const = 8 + 8 * imm_6_6; ] unimpl
+
+:mv16 a0l, rn_r1_r8 is op_15_3=0b1100000010000 & rn_r1_r8 & a0l { a0l = rn_r1_r8; }
+:mv16 a0h, rn_r1_r8 is op_15_3=0b1100000010001 & rn_r1_r8 & a0h { a0h = rn_r1_r8; }
+:mv16 rn_r1_r8, a0l is op_15_3=0b1100000010010 & rn_r1_r8 & a0l { rn_r1_r8 = a0l; }
+:mv16 rn_r1_r8, a0h is op_15_3=0b1100000010011 & rn_r1_r8 & a0h { rn_r1_r8 = a0h; }
+
+:mac16 rn, rm is op_15_8=0xc1 & rm & rn unimpl
+
+:maxv16 rn, rm is op_15_8=0xc2 & rm & rn unimpl
+:minv16 rn, rm is op_15_8=0xc3 & rm & rn unimpl
+
+:max16 rn, rm is op_15_8=0xc4 & rm & rn unimpl
+:min16 rn, rm is op_15_8=0xc5 & rm & rn unimpl
+
+:maxd16 rn, rm is op_15_8=0xc6 & rm & rn unimpl
+:mind16 rn, rm is op_15_8=0xc7 & rm & rn unimpl
+
+:mv16 csrn, rm_r1_r8_6_4 is op_15_7=0b110010000 & rm_r1_r8_6_4 & csrn { csrn = rm_r1_r8_6_4; }
+:mv16 rn_r1_r8, csrm_6_3 is op_15_7=0b110010001 & csrm_6_3 & rn_r1_r8 { rn_r1_r8 = csrm_6_3; }
+
+:bset16 rn_r1_r8, #imm_6_3 is op_15_7=0b110010010 & imm_6_3 & rn_r1_r8 unimpl
+:bclr16 rn_r1_r8, #imm_6_3 is op_15_7=0b110010011 & imm_6_3 & rn_r1_r8 unimpl
+:btgl16 rn_r1_r8, #imm_6_3 is op_15_7=0b110010100 & imm_6_3 & rn_r1_r8 unimpl
+
+:rnds16 rn_r1_r8, rm_r1_r8_5_3, rm_r1_r8_8_6 is op_15_9=0b1100110 & rm_r1_r8_8_6 & rm_r1_r8_5_3 & rn_r1_r8 unimpl
+:rndu16 rn_r1_r8, rm_r1_r8_5_3, rm_r1_r8_8_6 is op_15_9=0b1100111 & rm_r1_r8_8_6 & rm_r1_r8_5_3 & rn_r1_r8 unimpl
+
+:osl16 rn_r1_r8, rm_r1_r8_5_3, #imm_9_6 is op_15_10=0b110100 & imm_9_6 & rm_r1_r8_5_3 & rn_r1_r8 unimpl
 
 }
 
