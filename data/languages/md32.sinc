@@ -1215,8 +1215,8 @@ with: op_15_9=0b1000000 {
 :maxv16 rn, rm is op_15_8=0xc2 & rm & rn unimpl
 :minv16 rn, rm is op_15_8=0xc3 & rm & rn unimpl
 
-:max16 rn, rm is op_15_8=0xc4 & rm & rn unimpl
-:min16 rn, rm is op_15_8=0xc5 & rm & rn unimpl
+:max16 rn, rm is op_15_8=0xc4 & rm & rn { if (rn s> rm) goto inst_next; rn = rm; }
+:min16 rn, rm is op_15_8=0xc5 & rm & rn { if (rn s< rm) goto inst_next; rn = rm; }
 
 :maxd16 rn, rm is op_15_8=0xc6 & rm & rn unimpl
 :mind16 rn, rm is op_15_8=0xc7 & rm & rn unimpl
