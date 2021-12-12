@@ -159,6 +159,8 @@ attach variables [ csrd csrs1 csrn csrm_6_3 ] [
 define pcodeop halt;
 define pcodeop ieon;
 define pcodeop ieoff;
+define pcodeop ior;
+define pcodeop iow;
 define pcodeop swi;
 
 
@@ -511,8 +513,13 @@ with: bundle=0 {
 :rl rs1, rd is op_31_8=0x070000 & rs1 & rd unimpl
 :cw rs1, rd is op_31_8=0x070001 & rs1 & rd unimpl
 
-:ior rs1, #imm_12_8(rd) is op_31_13=0b0000011100000000010 & imm_12_8 & rs1 & rd unimpl
-:iow rs1, #imm_12_8(rd) is op_31_13=0b0000011100000000011 & imm_12_8 & rs1 & rd unimpl
+:ior rs1, #imm_12_8(rd) is op_31_13=0b0000011100000000010 & imm_12_8 & rs1 & rd {
+	rs1 = ior(rd + imm_12_8);
+}
+
+:iow rs1, #imm_12_8(rd) is op_31_13=0b0000011100000000011 & imm_12_8 & rs1 & rd {
+	iow(rd + imm_12_8, rs1);
+}
 
 # Move from dbg CSR to register.
 :mv rd, dbg is op_31_4=0x0700800 & rd & dbg {
