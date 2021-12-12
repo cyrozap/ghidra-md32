@@ -1212,8 +1212,8 @@ with: op_15_9=0b1000000 {
 
 :mac16 rn, rm is op_15_8=0xc1 & rm & rn { a0 = a0 + (sext(rn) * sext(rm)); }
 
-:maxv16 rn, rm is op_15_8=0xc2 & rm & rn unimpl
-:minv16 rn, rm is op_15_8=0xc3 & rm & rn unimpl
+:maxv16 rn, rm is op_15_8=0xc2 & rm & rn { local rm_shift = rm << 16; local lo:2 = rm_shift(2); local hi:2 = rm(2); rn = sext(lo); if (lo s> hi) goto inst_next; rn = sext(hi); }
+:minv16 rn, rm is op_15_8=0xc3 & rm & rn { local rm_shift = rm << 16; local lo:2 = rm_shift(2); local hi:2 = rm(2); rn = sext(lo); if (lo s< hi) goto inst_next; rn = sext(hi); }
 
 :max16 rn, rm is op_15_8=0xc4 & rm & rn { if (rn s> rm) goto inst_next; rn = rm; }
 :min16 rn, rm is op_15_8=0xc5 & rm & rn { if (rn s< rm) goto inst_next; rn = rm; }
