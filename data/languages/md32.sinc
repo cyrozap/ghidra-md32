@@ -1086,6 +1086,76 @@ with: op_15_9=0b1000000 {
 # XOR two registers.
 :xor16 rn, rm is op_15_8=0x8c & rm & rn { rn = rn ^ rm; }
 
+# Count leading zeros. Starting from the most significant bit in rm, count the
+# number of contiguous zero bits and store that count in rn.
+:clz16 rn, rm is op_15_8=0x8d & rm & rn {
+	rn = 0;
+	if (rm & (1 << 31)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 30)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 29)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 28)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 27)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 26)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 25)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 24)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 23)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 22)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 21)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 20)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 19)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 18)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 17)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 16)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 15)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 14)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 13)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 12)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 11)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 10)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 9)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 8)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 7)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 6)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 5)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 4)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 3)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 2)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 1)) != 0 goto inst_next;
+	rn = rn + 1;
+	if (rm & (1 << 0)) != 0 goto inst_next;
+	rn = rn + 1;
+}
+
 # Shift register right (arithmetic) by an immediate.
 :sra16 rn, #imm_7_4 is op_15_8=0x90 & imm_7_4 & rn {
 	rn = rn s>> imm_7_4;
