@@ -967,24 +967,10 @@ with: bundle=0 {
 }
 
 # Copy the (signed) max of the values of two registers into a register.
-:max rd, rs1, rs2 is op_31_12=0x20000 & rs2 & rs1 & rd {
-	if (rs1 s> rs2) goto <rs1_greater>;
-	rd = rs2;
-	goto <end>;
-	<rs1_greater>
-	rd = rs1;
-	<end>
-}
+:max rd, rs1, rs2 is op_31_12=0x20000 & rs2 & rs1 & rd { rd = rs1; if (rs1 s>= rs2) goto inst_next; rd = rs2; }
 
 # Copy the (signed) min of the values of two registers into a register.
-:min rd, rs1, rs2 is op_31_12=0x20001 & rs2 & rs1 & rd {
-	if (rs1 s< rs2) goto <rs1_lesser>;
-	rd = rs2;
-	goto <end>;
-	<rs1_lesser>
-	rd = rs1;
-	<end>
-}
+:min rd, rs1, rs2 is op_31_12=0x20001 & rs2 & rs1 & rd { rd = rs1; if (rs1 s<= rs2) goto inst_next; rd = rs2; }
 
 # ADD a register with a register and an immediate.
 :add rd, rs1, #imm is op_31_13=0b0010000000000000001 & imm_12_12 & rs2 & rs1 & rd [
@@ -1212,11 +1198,11 @@ with: op_15_9=0b1000000 {
 
 :mac16 rn, rm is op_15_8=0xc1 & rm & rn { a0 = a0 + (sext(rn) * sext(rm)); }
 
-:maxv16 rn, rm is op_15_8=0xc2 & rm & rn { local rm_shift = rm << 16; local lo:2 = rm_shift(2); local hi:2 = rm(2); rn = sext(lo); if (lo s> hi) goto inst_next; rn = sext(hi); }
-:minv16 rn, rm is op_15_8=0xc3 & rm & rn { local rm_shift = rm << 16; local lo:2 = rm_shift(2); local hi:2 = rm(2); rn = sext(lo); if (lo s< hi) goto inst_next; rn = sext(hi); }
+:maxv16 rn, rm is op_15_8=0xc2 & rm & rn { local rm_shift = rm << 16; local lo:2 = rm_shift(2); local hi:2 = rm(2); rn = sext(lo); if (lo s>= hi) goto inst_next; rn = sext(hi); }
+:minv16 rn, rm is op_15_8=0xc3 & rm & rn { local rm_shift = rm << 16; local lo:2 = rm_shift(2); local hi:2 = rm(2); rn = sext(lo); if (lo s<= hi) goto inst_next; rn = sext(hi); }
 
-:max16 rn, rm is op_15_8=0xc4 & rm & rn { if (rn s> rm) goto inst_next; rn = rm; }
-:min16 rn, rm is op_15_8=0xc5 & rm & rn { if (rn s< rm) goto inst_next; rn = rm; }
+:max16 rn, rm is op_15_8=0xc4 & rm & rn { if (rn s>= rm) goto inst_next; rn = rm; }
+:min16 rn, rm is op_15_8=0xc5 & rm & rn { if (rn s<= rm) goto inst_next; rn = rm; }
 
 :maxd16 rn, rm is op_15_8=0xc6 & rm & rn unimpl
 :mind16 rn, rm is op_15_8=0xc7 & rm & rn unimpl
