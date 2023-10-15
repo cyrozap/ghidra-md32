@@ -5,8 +5,10 @@ Work-in-progress, most instructions not yet supported.
 ## Build and Install
 
 ```
-$ cd ghidra_9.*/Ghidra/Processors
-$ git clone https://github.com/cyrozap/ghidra-md32.git MD32
-$ cd MD32
-$ make
+$ git clone https://github.com/cyrozap/ghidra-md32.git
+$ cd ghidra-md32
+$ gradle
 ```
+
+The `dist` directory will now contain the extension zip file that you can
+install into Ghidra.
